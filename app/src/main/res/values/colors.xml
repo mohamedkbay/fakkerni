@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cream">#20232B</color>
+    <color name="paper">#DDE2E5</color>
+    <color name="ink">#252B35</color>
+    <color name="muted">#747C84</color>
+    <color name="accent">#B39AE4</color>
+    <color name="accent_dark">#9276C7</color>
+    <color name="dark_card">#282F3A</color>
+    <color name="slate_soft">#C9D0D5</color>
+    <color name="white">#FFFFFF</color>
+</resources>

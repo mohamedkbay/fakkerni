@@ -1,0 +1,25 @@
+.gradle/
+local.properties
+**/build/
+*.iml
+.idea/
+captures/
+.DS_Store
+node_modules/
+
+# Local releases, recordings and device artifacts; public media is curated in docs/media.
+dist/
+captures/
+*.apk
+*.aab
+*.idsig
+*.jks
+*.keystore
+*.p12
+*.pem
+*.enc
+.env
+.env.*
+!.env.example
+*.log
+*.gesture-telemetry.json

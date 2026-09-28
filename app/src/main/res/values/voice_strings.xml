@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_title">قولها بصوتك</string>
+    <string name="voice_hint">مثلاً: غدوة الساعة خمسة العشية نتصل بأحمد. تسجيل حتى دقيقة.</string>
+    <string name="voice_record">سجّل تذكير</string>
+    <string name="voice_stop">إيقاف التسجيل</string>
+    <string name="voice_cancel">إلغاء</string>
+    <string name="voice_recording">نسجّل… %1$d / 60 ثانية</string>
+    <string name="voice_busy">نحوّل صوتك لنص…</string>
+    <string name="voice_review">راجع النص واليوم والساعة، وبعدها احفظ التذكير.</string>
+    <string name="voice_missing">الموعد ناقص أو غير واضح. اختار اليوم والساعة بنفسك قبل الحفظ.</string>
+    <string name="voice_need_date">اختار اليوم للتذكير الصوتي</string>
+    <string name="voice_need_time">اختار الساعة للتذكير الصوتي</string>
+    <string name="voice_mic_error">التسجيل يحتاج إذن الميكروفون. تقدر تفعّله من إعدادات التطبيق.</string>
+    <string name="voice_record_error">ما قدرناش نسجّل. جرّب مرة ثانية وتأكد أن الميكروفون متاح.</string>
+    <string name="voice_network_error">تعذّر الاتصال. تأكد من الإنترنت واضغط الزر لإعادة المحاولة.</string>
+    <string name="voice_key_error">راجع مفتاح المزوّد المختار في الإعدادات.</string>
+    <string name="voice_quota_error">وصلت لحد الاستخدام أو الرصيد. راجع حساب المزوّد، أو حاول لاحقاً.</string>
+    <string name="voice_parse_error">ما قدرناش نفهم التسجيل بثقة. جرّب تسجيل أوضح أو اكتب التذكير.</string>
+    <string name="voice_result">النص المسموع\n%1$s\n\n%2$s</string>
+    <string name="voice_request_error">مزوّد الذكاء الاصطناعي رفض الطلب. جرّب تسجيلاً آخر أو راجع المفتاح.</string>
+</resources>

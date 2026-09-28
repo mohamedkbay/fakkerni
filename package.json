@@ -1,0 +1,7 @@
+{
+  "name": "fakkerni-icon-assets",
+  "private": true,
+  "type": "module",
+  "scripts": { "icons": "node scripts/build-icons.mjs" },
+  "devDependencies": { "morphicons": "1.7.1" }
+}

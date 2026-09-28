@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_title">Say it out loud</string>
+    <string name="voice_hint">For example: Tomorrow at 5 PM, call Ahmed. Record up to one minute.</string>
+    <string name="voice_record">Record reminder</string>
+    <string name="voice_stop">Stop recording</string>
+    <string name="voice_cancel">Cancel</string>
+    <string name="voice_recording">Recording… %1$d / 60 seconds</string>
+    <string name="voice_busy">Turning your voice into text…</string>
+    <string name="voice_review">Review the text, date and time, then save the reminder.</string>
+    <string name="voice_missing">The schedule is missing or unclear. Select the date and time yourself before saving.</string>
+    <string name="voice_need_date">Choose the date for this voice reminder</string>
+    <string name="voice_need_time">Choose the time for this voice reminder</string>
+    <string name="voice_mic_error">Recording needs microphone permission. You can enable it in app settings.</string>
+    <string name="voice_record_error">Could not record. Try again and check that the microphone is available.</string>
+    <string name="voice_network_error">Check your internet and tap the button to retry.</string>
+    <string name="voice_key_error">Check the selected provider’s API key in settings.</string>
+    <string name="voice_quota_error">Usage limit or balance reached. Check your provider account or try later.</string>
+    <string name="voice_parse_error">Could not understand the recording reliably. Try a clearer recording or type your reminder.</string>
+    <string name="voice_result">Transcript\n%1$s\n\n%2$s</string>
+    <string name="voice_request_error">The AI provider rejected the request. Try another recording or check your key.</string>
+</resources>

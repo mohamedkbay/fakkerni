@@ -1,0 +1,16 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/notificationCard" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:padding="12dp" android:background="@drawable/bg_notification_card">
+    <TextView android:id="@+id/notificationLabel" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp" android:paddingVertical="2dp" android:background="@drawable/bg_circle_yellow"
+        android:fontFamily="@font/cairo" android:textColor="#2A313C" android:textSize="10sp" android:includeFontPadding="false" />
+    <TextView android:id="@id/notificationTitle" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:fontFamily="@font/cairo" android:textColor="#2A313C"
+        android:textSize="17sp" android:textStyle="bold" android:includeFontPadding="false" android:maxLines="3" android:ellipsize="end" />
+    <TextView android:id="@id/notificationTime" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" android:fontFamily="@font/cairo" android:textColor="#37434D"
+        android:textSize="13sp" android:includeFontPadding="false" android:maxLines="2" android:ellipsize="end" />
+    <TextView android:id="@+id/notificationPhone" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:fontFamily="@font/cairo" android:textColor="#37434D"
+        android:textSize="12sp" android:includeFontPadding="false" android:maxLines="1" android:ellipsize="end" android:textDirection="ltr" />
+</LinearLayout>

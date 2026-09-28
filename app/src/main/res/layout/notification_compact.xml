@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notificationCard" android:layout_width="match_parent" android:layout_height="48dp"
+    android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="8dp"
+    android:background="@drawable/bg_notification_card">
+    <ImageView android:layout_width="36dp" android:layout_height="36dp"
+        android:padding="8dp" android:background="@drawable/bg_circle_yellow"
+        android:src="@drawable/ic_notification" android:tint="@color/ink"
+        android:importantForAccessibility="no" />
+    <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+        android:orientation="vertical" android:gravity="center_vertical" android:layout_marginStart="10dp">
+        <TextView android:id="@+id/notificationTitle" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:fontFamily="@font/cairo" android:textColor="#2A313C" android:textSize="14sp" android:textStyle="bold"
+            android:includeFontPadding="false" android:maxLines="1" android:ellipsize="end" />
+        <TextView android:id="@+id/notificationTime" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:fontFamily="@font/cairo" android:textColor="#37434D" android:textSize="11sp"
+            android:includeFontPadding="false" android:maxLines="1" android:ellipsize="end" />
+    </LinearLayout>
+</LinearLayout>
