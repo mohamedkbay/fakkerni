@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.concurrent.*;
 
-/** One tap records; the next stops and transcribes. Backgrounding never starts an upload. */
+/** Hold-to-speak on the assistant screen; drafts are always reviewed before saving. */
 final class VoiceInput {
     static final int MICROPHONE_REQUEST = 62;
     interface Listener { void onDraft(VoiceDraft draft); }
@@ -25,7 +25,9 @@ final class VoiceInput {
     private final MorphIconView record, cancel;
     private final TextView status;
     private AssistantOrb orb;
-    private android.widget.FrameLayout orbButton;
+    private LinearLayout immersiveControls;
+    private TextView holdHint;
+    private boolean holdActive,immersive;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private MediaRecorder recorder;
@@ -43,7 +45,7 @@ final class VoiceInput {
             int seconds = (int) ((SystemClock.elapsedRealtime() - started) / 1000);
             if(orb!=null){try{orb.amplitude(Math.min(1f,recorder.getMaxAmplitude()/12000f));}catch(RuntimeException ignored){}}
             status.setText(String.format(Locale.US,"%02d:%02d",seconds/60,seconds%60) + " · "
-                    + Ui.t(activity,"اضغط للإيقاف","Tap to stop"));
+                    + Ui.t(activity,immersive?"سيب الزر للتحويل":"اضغط للإيقاف",immersive?"Release to transcribe":"Tap to stop"));
             if (seconds >= 60) stopRecording(true); else handler.postDelayed(this, 100);
         }
     };
@@ -52,6 +54,7 @@ final class VoiceInput {
     }
     VoiceInput(Activity activity, LinearLayout panel, Listener listener, boolean immersive) {
         this.activity = activity; this.listener = listener;
+        this.immersive=immersive;
         panel.setOrientation(LinearLayout.HORIZONTAL);panel.setGravity(android.view.Gravity.CENTER_VERTICAL);
         int p=Ui.dp(activity,16);panel.setPadding(p,p,p,p);
         panel.setBackground(new Ui.Pattern(Ui.INK,0x125F6B75,1,activity));
@@ -59,7 +62,7 @@ final class VoiceInput {
         record.setId(View.generateViewId());panel.addView(record);
         LinearLayout labels=Ui.column(activity);labels.setPadding(p,0,p,0);
         labels.addView(Ui.text(activity,Ui.t(activity,"قولها، ونكتبها لك","Say it. We’ll write it."),16,Ui.WHITE));
-        status=Ui.text(activity,Ui.t(activity,"اضغط وسجّل تذكيرك","Tap to record a reminder"),11,0xCCDDE3E6);
+        status=Ui.text(activity,Ui.t(activity,"اضغط وسجّل تذكيرك","Tap to record a reminder"),11,Ui.SECONDARY);
         Ui.add(labels,status,4);panel.addView(labels,new LinearLayout.LayoutParams(0,-2,1));
         cancel=Ui.icon(activity,"close",Ui.PAPER,Ui.t(activity,"إلغاء التسجيل","Discard recording"),48);
         panel.addView(cancel);cancel.setOnClickListener(v->cancel());
@@ -70,18 +73,41 @@ final class VoiceInput {
         if(immersive){
             panel.removeAllViews();panel.setOrientation(LinearLayout.VERTICAL);panel.setGravity(android.view.Gravity.CENTER);
             panel.setPadding(0,0,0,0);panel.setBackground(null);
-            orbButton=new android.widget.FrameLayout(activity);
-            orb=new AssistantOrb(activity);orbButton.addView(orb,new android.widget.FrameLayout.LayoutParams(-1,-1));
-            record.setBackground(Ui.rounded(0xB5222536,40,activity));record.setInk(Ui.WHITE);
-            android.widget.FrameLayout.LayoutParams iconParams=new android.widget.FrameLayout.LayoutParams(Ui.dp(activity,60),Ui.dp(activity,60),android.view.Gravity.CENTER);
-            orbButton.addView(record,iconParams);
-            orbButton.setOnClickListener(v->record.performClick());
-            orbButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            panel.addView(orbButton,new LinearLayout.LayoutParams(-1,Ui.dp(activity,280)));
+            orb=new AssistantOrb(activity);
+            panel.addView(orb,new LinearLayout.LayoutParams(-1,Ui.dp(activity,310)));
             ((LinearLayout)status.getParent()).removeView(status);status.setTextSize(15);status.setGravity(android.view.Gravity.CENTER);
-            Ui.add(panel,status,0);panel.addView(cancel);((LinearLayout.LayoutParams)cancel.getLayoutParams()).topMargin=Ui.dp(activity,16);
+            status.setTextColor(Ui.SECONDARY);Ui.add(panel,status,0);
+            LinearLayout controls=Ui.row(activity);controls.setGravity(android.view.Gravity.CENTER);immersiveControls=controls;
+            record.setBackground(Ui.rounded(Ui.YELLOW,44,activity));record.setInk(Ui.BG);
+            controls.addView(record,new LinearLayout.LayoutParams(Ui.dp(activity,78),Ui.dp(activity,78)));
+            controls.addView(cancel,new LinearLayout.LayoutParams(Ui.dp(activity,48),Ui.dp(activity,48)));
+            ((LinearLayout.LayoutParams)cancel.getLayoutParams()).setMarginStart(Ui.dp(activity,12));
+            Ui.add(panel,controls,20);
+            TextView hold=Ui.text(activity,Ui.t(activity,"اضغط مطوّلًا للكلام · سيب الزر للإرسال","Hold to speak · release to send"),12,Ui.SECONDARY);
+            hold.setGravity(android.view.Gravity.CENTER);holdHint=hold;Ui.add(panel,hold,10);
+            record.setOnClickListener(v->{if(audio!=null)upload();else if(recorder==null)requestRecording();else stopRecording(true);});
+            record.setOnTouchListener((v,event)->{
+                switch(event.getActionMasked()){
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        if(busy)return true;
+                        holdActive=true;v.setPressed(true);
+                        if(audio!=null)upload();else requestRecording();return true;
+                    case android.view.MotionEvent.ACTION_UP:
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                        holdActive=false;v.setPressed(false);
+                        if(recorder!=null)stopRecording(true);return true;
+                    default:return true;
+                }
+            });
+            status.setText(Ui.t(activity,"قول شن عندك وإمتى","Tell me what and when"));
         }
         update();
+    }
+    void moveActions(LinearLayout target){
+        if(!immersive||immersiveControls==null)return;
+        ((LinearLayout)immersiveControls.getParent()).removeView(immersiveControls);
+        ((LinearLayout)holdHint.getParent()).removeView(holdHint);
+        Ui.add(target,immersiveControls,28);Ui.add(target,holdHint,8);
     }
     void autoStart(){
         // Explicitly requested AI-first flow. Never launch settings or record while backgrounded.
@@ -98,7 +124,10 @@ final class VoiceInput {
         startRecording();
     }
     void permissionResult(int[] results) {
-        if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) startRecording();
+        if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+            if(!immersive||holdActive)startRecording();
+            else status.setText(Ui.t(activity,"جاهز. اضغط مطوّلًا للتسجيل","Ready. Hold to record"));
+        }
         else status.setText(R.string.voice_mic_error);
     }
     private void startRecording() {
@@ -108,7 +137,7 @@ final class VoiceInput {
         try {
             audio = File.createTempFile("voice-", ".m4a", activity.getCacheDir());
             recorder = new MediaRecorder();
-            recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
             recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             recorder.setAudioSamplingRate(16000);recorder.setAudioChannels(1);
@@ -131,7 +160,7 @@ final class VoiceInput {
         boolean valid=SystemClock.elapsedRealtime()-started>=700;
         try{recorder.stop();}catch(RuntimeException e){valid=false;}
         releaseRecorder();
-        if(!valid||audio==null||audio.length()<100){deleteAudio();status.setText(R.string.voice_record_error);}
+        if(!valid||audio==null||audio.length()<100){deleteAudio();status.setText(Ui.t(activity,"اضغط مطوّلًا واحكي التذكير","Hold a little longer and speak"));}
         else if(send){upload();return;}
         else status.setText(Ui.t(activity,"اضغط لتحويل التسجيل إلى نص","Tap to transcribe this recording"));
         update();
@@ -177,7 +206,7 @@ final class VoiceInput {
         if(client!=null){OpenAiClient request=client;new Thread(request::cancel,"cancel-openai").start();}
         if(pending!=null)pending.cancel(true);
         releaseRecorder();deleteAudio();busy=false;completed=false;
-        status.setText(Ui.t(activity,"اضغط وسجّل تذكيرك","Tap to record a reminder"));update();
+        status.setText(Ui.t(activity,immersive?"قول شن عندك وإمتى":"اضغط وسجّل تذكيرك",immersive?"Tell me what and when":"Tap to record a reminder"));update();
     }
     void destroy(){destroyed=true;cancel();worker.shutdownNow();handler.removeCallbacksAndMessages(null);}
     private void deleteAudio(){if(audio!=null){audio.delete();audio=null;}}
@@ -186,7 +215,6 @@ final class VoiceInput {
         record.setIcon(busy?"loader":recorder!=null?"stop":audio!=null?"retry":completed?"check":"mic",true);
         record.spinning(busy);record.setEnabled(!busy);
         if(orb!=null)orb.state(recorder!=null,busy);
-        if(orbButton!=null)orbButton.setEnabled(!busy);
         record.setContentDescription(Ui.t(activity,busy?"جاري تحويل الصوت":recorder!=null?"إيقاف وتحويل التسجيل":audio!=null?"إعادة محاولة التحويل":"تسجيل تذكير",
                 busy?"Transcribing":recorder!=null?"Stop and transcribe":audio!=null?"Retry transcription":"Record reminder"));
         cancel.setVisibility(audio!=null||busy?View.VISIBLE:View.GONE);

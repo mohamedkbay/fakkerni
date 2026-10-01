@@ -37,6 +37,7 @@ public class AddReminderActivity extends Activity {
     private String pendingContact="";
     private int contactGeneration;
     private final java.util.concurrent.ExecutorService contactsWorker=java.util.concurrent.Executors.newSingleThreadExecutor();
+    private String appliedMode;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -45,8 +46,9 @@ public class AddReminderActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        Ui.theme(this);super.onCreate(savedInstanceState);
         Design.editor(this);
+        appliedMode=Appearance.mode(this);
 
         reminderText = findViewById(R.id.reminderText);
         phoneText = findViewById(R.id.phoneText);
@@ -81,14 +83,7 @@ public class AddReminderActivity extends Activity {
         findViewById(R.id.saveButton).setOnClickListener(v -> saveReminder());
         findViewById(R.id.aiSettingsButton).setOnClickListener(v ->
                 startActivity(new Intent(this, AiSettingsActivity.class)));
-        findViewById(R.id.contactButton).setOnClickListener(v -> {
-            try {
-                startActivityForResult(new Intent(Intent.ACTION_PICK,
-                        android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI), PICK_CONTACT);
-            } catch (android.content.ActivityNotFoundException e) {
-                Toast.makeText(this, Ui.t(this,"ما فيش تطبيق جهات اتصال؛ اكتب الرقم هنا","No contacts app. Enter a number instead."), Toast.LENGTH_LONG).show();
-            }
-        });
+        findViewById(R.id.contactButton).setOnClickListener(v -> openContactSearch());
         phoneText.addTextChangedListener(new android.text.TextWatcher() {
             public void beforeTextChanged(CharSequence s,int start,int count,int after) {}
             public void onTextChanged(CharSequence s,int start,int before,int count) {
@@ -125,7 +120,31 @@ public class AddReminderActivity extends Activity {
 
     private void refreshContact() {
         ((TextView)findViewById(R.id.contactName)).setText(contactName.isEmpty()
-                ? Ui.t(this,"اضغط الهاتف للبحث في جهات اتصالك","Tap the phone to search your contacts") : contactName);
+                ? Ui.t(this,"ابحث بالاسم العربي أو الإنجليزي أو الرقم","Search Arabic / English names or numbers") : contactName);
+    }
+
+    private void openContactSearch(){
+        EditText query=new EditText(this);query.setSingleLine(true);
+        query.setHint(Ui.t(this,"اكتب اسم أو رقم","Name or number"));
+        query.setTypeface(getResources().getFont(R.font.cairo));
+        int p=Ui.dp(this,20);query.setPadding(p,p,p,p);
+        new android.app.AlertDialog.Builder(this)
+                .setTitle(Ui.t(this,"ابحث في جهات اتصالك","Search your contacts"))
+                .setView(query)
+                .setNegativeButton(Ui.t(this,"قائمة الهاتف","Phone contacts"),(d,w)->openSystemContactPicker())
+                .setPositiveButton(Ui.t(this,"بحث","Search"),(d,w)->{
+                    String search=query.getText().toString().trim();
+                    if(search.isEmpty()){openSystemContactPicker();return;}
+                    contactName="";contactNumber="";phoneText.setText("");refreshContact();
+                    matchSpokenContact(search);
+                }).show();
+    }
+    private void openSystemContactPicker(){
+        try{startActivityForResult(new Intent(Intent.ACTION_PICK,
+                android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI),PICK_CONTACT);}
+        catch(android.content.ActivityNotFoundException e){
+            Toast.makeText(this,Ui.t(this,"ما فيش تطبيق جهات اتصال؛ اكتب الرقم هنا","No contacts app. Enter a number instead."),Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override protected void onActivityResult(int request, int result, Intent data) {
@@ -246,6 +265,15 @@ public class AddReminderActivity extends Activity {
             dateChip.setText(R.string.choose_date);
         }
         if (timeNeedsChoice) timeButton.setText(R.string.choose_time);
+        TextView[] choices={todayChip,tomorrowChip,dateChip};
+        for(TextView chip:choices){
+            chip.setBackground(Ui.rounded(chip.isSelected()?Ui.YELLOW:Ui.INK,18,this));
+            chip.setTextColor(chip.isSelected()?Ui.BG:Ui.WHITE);
+        }
+    }
+
+    @Override protected void onResume(){super.onResume();
+        if(appliedMode!=null&&!Appearance.mode(this).equals(appliedMode))recreate();
     }
 
     private void saveReminder() {

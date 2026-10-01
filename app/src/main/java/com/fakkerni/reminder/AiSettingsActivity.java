@@ -12,13 +12,27 @@ import android.widget.*;
 public class AiSettingsActivity extends Activity {
     @Override protected void attachBaseContext(Context base){super.attachBaseContext(LocaleHelper.wrap(base));}
     @Override protected void onCreate(Bundle state){
-        super.onCreate(state);getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        Ui.theme(this);super.onCreate(state);getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         LinearLayout root=Design.root(this),page=Ui.column(this);
         ScrollView scroll=new ScrollView(this);scroll.addView(page);root.addView(scroll);
         LinearLayout header=Ui.row(this);
         MorphIconView back=Ui.icon(this,"back",Ui.PAPER,Ui.t(this,"رجوع","Back"),48);
         back.setOnClickListener(v->finish());header.addView(back);Ui.space(header);
         header.addView(Ui.text(this,Ui.t(this,"الإعدادات","Settings"),28,Ui.WHITE));page.addView(header);
+        LinearLayout personal=Ui.card(this,Ui.SURFACE);
+        Ui.add(personal,Ui.text(this,Ui.t(this,"المساعد والمظهر","Assistant & appearance"),19,Ui.WHITE),0);
+        Button assistantName=Ui.button(this,Ui.t(this,"اسم المساعد: ","Assistant name: ")+Appearance.name(this),Ui.INK);
+        assistantName.setTextColor(Ui.WHITE);assistantName.setOnClickListener(v->editAssistantName());Ui.add(personal,assistantName,12);
+        LinearLayout modes=Ui.row(this);
+        for(String mode:new String[]{"dark","light"}){
+            Button choice=Ui.button(this,mode.equals("dark")?Ui.t(this,"داكن","Dark"):Ui.t(this,"فاتح","Light"),
+                    Appearance.mode(this).equals(mode)?Ui.YELLOW:Ui.INK);
+            if(!Appearance.mode(this).equals(mode))choice.setTextColor(Ui.WHITE);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,Ui.dp(this,54),1);
+            if(mode.equals("light"))lp.setMarginStart(Ui.dp(this,8));modes.addView(choice,lp);
+            choice.setOnClickListener(v->{Appearance.mode(this,mode);recreate();});
+        }
+        Ui.add(personal,modes,8);Ui.add(page,personal,16);
         AiProvider provider=AiProvider.selected(this);AiProvider.select(this,provider);
         LinearLayout ai=Ui.card(this,Ui.SURFACE);
         Ui.add(ai,Ui.text(this,Ui.t(this,"التسجيل الذكي","Voice AI"),21,Ui.WHITE),0);
@@ -39,7 +53,7 @@ public class AiSettingsActivity extends Activity {
         Ui.add(page,ai,20);
         LinearLayout alerts=Ui.card(this,Ui.INK);
         Ui.add(alerts,Ui.text(this,Ui.t(this,"التنبيهات","Alerts"),21,Ui.WHITE),0);
-        Ui.add(alerts,Ui.text(this,Ui.t(this,"قبل الموعد بـ1 ساعة · صوت واهتزاز","1 hour before · sound & vibration"),13,Ui.PAPER),6);
+        Ui.add(alerts,Ui.text(this,Ui.t(this,"قبل الموعد بـ1 ساعة · صوت واهتزاز","1 hour before · sound & vibration"),13,Ui.SECONDARY),6);
         Button test=Ui.button(this,Ui.t(this,"جرّب بعد 10 ثواني","Test in 10 seconds"),Ui.YELLOW);Ui.add(alerts,test,14);
         test.setOnClickListener(v->testAlarm());
         Button permissions=Ui.button(this,Ui.t(this,"الصوت وإذن الإشعارات","Sound & notification permission"),Ui.PAPER);Ui.add(alerts,permissions,8);
@@ -47,13 +61,23 @@ public class AiSettingsActivity extends Activity {
         Button help=Ui.button(this,Ui.t(this,"مساعدة","Help"),Ui.PAPER);Ui.add(page,help,14);help.setOnClickListener(v->showHelp());
         Ui.setup(this,root);
     }
+    private void editAssistantName(){
+        EditText input=new EditText(this);input.setSingleLine(true);input.setText(Appearance.name(this));
+        input.setSelectAllOnFocus(true);input.setTypeface(getResources().getFont(R.font.cairo));
+        int p=Ui.dp(this,20);input.setPadding(p,p,p,p);
+        new AlertDialog.Builder(this).setTitle(Ui.t(this,"اسم المساعد","Assistant name")).setView(input)
+                .setNegativeButton(android.R.string.cancel,null)
+                .setPositiveButton(Ui.t(this,"حفظ","Save"),(d,w)->{
+                    String value=input.getText().toString().trim();if(!value.isEmpty()){Appearance.name(this,value);recreate();}
+                }).show();
+    }
     private void editKey(AiProvider provider){
         LinearLayout content=Ui.column(this);int pad=Ui.dp(this,20);content.setPadding(pad,pad,pad,pad);
         Ui.add(content,Ui.text(this,provider==AiProvider.GROQ
                 ?Ui.t(this,"خطة Groq المجانية بحدود استخدام. المفتاح مشفّر على هاتفك.","Groq’s free plan has usage limits. Your key is encrypted on your phone.")
-                :Ui.t(this,"رصيد OpenAI API منفصل عن ChatGPT. المفتاح مشفّر على هاتفك.","OpenAI API billing is separate from ChatGPT. Your key is encrypted on your phone."),13,Ui.INK),0);
+                :Ui.t(this,"رصيد OpenAI API منفصل عن ChatGPT. المفتاح مشفّر على هاتفك.","OpenAI API billing is separate from ChatGPT. Your key is encrypted on your phone."),13,Ui.WHITE),0);
         EditText input=new EditText(this);input.setSingleLine(true);input.setTextDirection(View.TEXT_DIRECTION_LTR);
-        input.setTypeface(getResources().getFont(R.font.cairo));input.setTextColor(Ui.INK);input.setHintTextColor(Ui.MUTED);
+        input.setTypeface(getResources().getFont(R.font.cairo));input.setTextColor(Ui.WHITE);input.setHintTextColor(Ui.MUTED);
         input.setInputType(android.text.InputType.TYPE_CLASS_TEXT|android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
         input.setSaveEnabled(false);input.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO);
         input.setHint(provider.keyPrefix+"…");input.setContentDescription(provider.label+" API key");Ui.add(content,input,12);

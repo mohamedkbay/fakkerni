@@ -6,6 +6,7 @@ import android.widget.*;
 
 final class Design {
     static LinearLayout root(Activity a) {
+        Ui.apply(a);
         LinearLayout root=Ui.column(a); root.setBackground(new Ui.Pattern(0,0,0,a));
         int p=Ui.dp(a,18);root.setPadding(p,Ui.dp(a,12),p,Ui.dp(a,12)); return root;
     }
@@ -47,12 +48,12 @@ final class Design {
         }
         Ui.add(page,filters,22);
         LinearLayout banner=Ui.card(a,Ui.YELLOW);banner.setId(R.id.permissionBanner);
-        TextView message=Ui.text(a,"",12,Ui.INK);message.setId(R.id.permissionMessage);banner.addView(message);
+        TextView message=Ui.text(a,"",12,Ui.BG);message.setId(R.id.permissionMessage);banner.addView(message);
         Button enable=Ui.button(a,a.getString(R.string.enable),Ui.WHITE);enable.setId(R.id.permissionButton);banner.addView(enable);
         Ui.add(page,banner,14);banner.setVisibility(View.GONE);
         LinearLayout heading=Ui.row(a);
         heading.addView(Ui.text(a,Ui.t(a,"جدولك","Your schedule"),15,Ui.WHITE));Ui.space(heading);
-        TextView count=Ui.text(a,"",13,0xCCFFFFFF);count.setId(R.id.summaryCount);heading.addView(count);
+        TextView count=Ui.text(a,"",13,Ui.SECONDARY);count.setId(R.id.summaryCount);heading.addView(count);
         Ui.add(page,heading,20);
         LinearLayout list=Ui.column(a);list.setId(R.id.reminderList);Ui.add(page,list,8);
         Button addButton=Ui.button(a,a.getString(R.string.add_reminder),Ui.YELLOW);addButton.setId(R.id.addButton);
@@ -84,7 +85,7 @@ final class Design {
         contact.addView(Ui.text(a,Ui.t(a,"شخص للاتصال","Someone to call"),14,Ui.WHITE));Ui.space(contact);
         MorphIconView person=Ui.icon(a,"phone",Ui.WHITE,Ui.t(a,"اختار من جهات الاتصال","Choose a contact"),48);
         person.setId(R.id.contactButton);contact.addView(person);Ui.add(form,contact,18);
-        TextView name=Ui.text(a,Ui.t(a,"اضغط الهاتف للبحث في جهات اتصالك","Tap the phone to search your contacts"),11,Ui.SECONDARY);
+        TextView name=Ui.text(a,Ui.t(a,"ابحث بالاسم العربي أو الإنجليزي أو الرقم","Search Arabic / English names or numbers"),11,Ui.SECONDARY);
         name.setId(R.id.contactName);Ui.add(form,name,4);
         EditText phone=field(a,R.id.phoneText,a.getString(R.string.phone_optional),true);Ui.add(form,phone,8);
         Ui.add(form,Ui.divider(a),18);
@@ -92,8 +93,8 @@ final class Design {
         LinearLayout days=Ui.row(a);int[] ids={R.id.todayChip,R.id.tomorrowChip,R.id.dateChip};
         int[] texts={R.string.today,R.string.tomorrow,R.string.choose_date};
         for(int i=0;i<3;i++) {
-            TextView day=Ui.text(a,a.getString(texts[i]),12,Ui.INK);day.setId(ids[i]);
-            day.setGravity(Gravity.CENTER);day.setBackgroundResource(R.drawable.bg_chip);
+            TextView day=Ui.text(a,a.getString(texts[i]),12,Ui.WHITE);day.setId(ids[i]);
+            day.setGravity(Gravity.CENTER);day.setBackground(Ui.rounded(Ui.INK,18,a));
             LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,Ui.dp(a,52),1);if(i>0)p.setMarginStart(Ui.dp(a,5));
             days.addView(day,p);
         }

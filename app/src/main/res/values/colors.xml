@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="cream">#20232B</color>
-    <color name="paper">#DDE2E5</color>
-    <color name="ink">#252B35</color>
-    <color name="muted">#747C84</color>
-    <color name="accent">#B39AE4</color>
-    <color name="accent_dark">#9276C7</color>
-    <color name="dark_card">#282F3A</color>
-    <color name="slate_soft">#C9D0D5</color>
+    <color name="cream">#050607</color>
+    <color name="paper">#E7ECE9</color>
+    <color name="ink">#151A19</color>
+    <color name="muted">#87918C</color>
+    <color name="accent">#E7ECE9</color>
+    <color name="accent_dark">#8D9C94</color>
+    <color name="dark_card">#1C2021</color>
+    <color name="slate_soft">#AEB9B2</color>
     <color name="white">#FFFFFF</color>
 </resources>

@@ -17,7 +17,8 @@ final class LocalContacts {
             if(rows!=null)while(rows.moveToNext()){
                 if(Thread.currentThread().isInterrupted())break;
                 String name=rows.getString(0),phone=Digits.latin(rows.getString(1));
-                if(!phone.matches("\\+?[0-9 ()-]{3,40}")||!ContactNames.matches(spoken,name))continue;
+                if(!phone.matches("\\+?[0-9 ()-]{3,40}")
+                        ||!(ContactNames.matches(spoken,name)||ContactNames.phoneMatches(spoken,phone)))continue;
                 String identity=ContactNames.normalize(name)+"|"+phone.replaceAll("[ ()-]","");
                 if(seen.add(identity))matches.add(new Match(name,phone));
             }

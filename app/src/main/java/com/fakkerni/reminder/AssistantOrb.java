@@ -4,22 +4,26 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.*;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
-/** A lightweight, continuously morphing blue orb. No video decoder or bitmap assets. */
+/** Animated, procedural silver wire sculpture inspired by the supplied assistant reference. */
 final class AssistantOrb extends View {
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Path shape=new Path();
+    private final Path path=new Path();
+    private final boolean light;
+    private Shader aura;
+    private float auraX,auraY,auraRadius;
     private ValueAnimator motion;
     private float phase,level;
     private boolean listening,processing;
-    AssistantOrb(Context c){super(c);setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);}
+    AssistantOrb(Context c){super(c);light=Appearance.light(c);setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);setLayerType(View.LAYER_TYPE_HARDWARE,null);}
     void state(boolean recording,boolean busy){listening=recording;processing=busy;invalidate();}
-    void amplitude(float value){level=level*.55f+value*.45f;invalidate();}
+    void amplitude(float value){level=level*.6f+value*.4f;invalidate();}
     private void animateIfVisible(){
         if(motion!=null){motion.cancel();motion=null;}
         if(!isAttachedToWindow()||!isShown()||getWindowVisibility()!=VISIBLE||!ValueAnimator.areAnimatorsEnabled())return;
-        motion=ValueAnimator.ofFloat(0,6.283185f);motion.setDuration(8000);motion.setRepeatCount(ValueAnimator.INFINITE);
-        motion.setInterpolator(new android.view.animation.LinearInterpolator());
+        motion=ValueAnimator.ofFloat(0,(float)(Math.PI*2));motion.setDuration(11000);
+        motion.setRepeatCount(ValueAnimator.INFINITE);motion.setInterpolator(new LinearInterpolator());
         motion.addUpdateListener(a->{phase=(float)a.getAnimatedValue();invalidate();});motion.start();
     }
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();animateIfVisible();}
@@ -28,41 +32,45 @@ final class AssistantOrb extends View {
     @Override protected void onDetachedFromWindow(){if(motion!=null){motion.cancel();motion=null;}super.onDetachedFromWindow();}
     @Override protected void onDraw(Canvas canvas){
         float side=Math.min(getWidth(),getHeight());if(side<=0)return;
-        float cx=getWidth()/2f,cy=getHeight()/2f;
-        float radius=side*(.33f+(listening?.018f*level:0));
-        paint.setShader(new RadialGradient(cx,cy,radius*1.45f,new int[]{0x445777FF,0x125777FF,0x005777FF},null,Shader.TileMode.CLAMP));
-        canvas.drawCircle(cx,cy,radius*1.45f,paint);
-        shape.reset();
-        for(int i=0;i<=180;i++){
-            double angle=i*Math.PI/90;
-            float r=radius*(1+.043f*(float)Math.sin(angle*3+phase)+.024f*(float)Math.cos(angle*5-phase*2));
-            float x=cx+r*(float)Math.cos(angle),y=cy+r*(float)Math.sin(angle);
-            if(i==0)shape.moveTo(x,y);else shape.lineTo(x,y);
+        float cx=getWidth()/2f,cy=getHeight()/2f,r=side*(listening?.375f+level*.018f:.365f);
+        paint.setStyle(Paint.Style.FILL);
+        if(aura==null||auraX!=cx||auraY!=cy||Math.abs(auraRadius-r)>2){
+            auraX=cx;auraY=cy;auraRadius=r;
+            aura=new RadialGradient(cx,cy,r*1.25f,
+                    light?new int[]{0x2064766D,0x0864766D,0x0064766D}:new int[]{0x2FC9DEDA,0x0AC9DEDA,0x00C9DEDA},null,Shader.TileMode.CLAMP);
         }
-        shape.close();
-        canvas.save();canvas.clipPath(shape);
-        paint.setShader(new RadialGradient(cx-radius*.38f,cy-radius*.56f,radius*1.9f,
-                new int[]{0xFFDAF5FF,0xFF8BABFF,0xFF344BF1,0xFF111885},new float[]{0,.25f,.63f,1},Shader.TileMode.CLAMP));
-        canvas.drawPath(shape,paint);
-        canvas.rotate((float)Math.sin(phase)*12+(processing?phase*57:0),cx,cy);
-        // Lit, curved ribbons reproduce the reference's sculpted surface.
-        for(int i=0;i<4;i++){
-            float offset=(i-1.5f)*radius*.49f+(float)Math.sin(phase+i)*radius*.06f;
-            paint.setShader(new LinearGradient(cx+offset-radius*.15f,cy,cx+offset+radius*.22f,cy,
-                    new int[]{0x003C57EF,0x667C9EFF,0xAAD5EFFF,0x003C57EF},new float[]{0,.42f,.65f,1},Shader.TileMode.CLAMP));
-            Path ribbon=new Path();ribbon.moveTo(cx+offset-radius*.3f,cy-radius*1.15f);
-            ribbon.cubicTo(cx+offset+radius*.65f,cy-radius*.4f,cx+offset-radius*.7f,cy+radius*.45f,cx+offset+radius*.2f,cy+radius*1.2f);
-            ribbon.lineTo(cx+offset+radius*.47f,cy+radius*1.2f);
-            ribbon.cubicTo(cx+offset-radius*.43f,cy+radius*.45f,cx+offset+radius*.92f,cy-radius*.4f,cx+offset-radius*.03f,cy-radius*1.15f);
-            ribbon.close();canvas.drawPath(ribbon,paint);
+        paint.setShader(aura);
+        canvas.drawCircle(cx,cy,r*1.25f,paint);paint.setShader(null);
+        canvas.save();canvas.translate(cx,cy);
+        float spin=phase*(processing?2.3f:1f);
+        for(int j=0;j<44;j++){
+            double band=j*Math.PI*2/44;
+            path.reset();
+            for(int i=0;i<=112;i++){
+                double a=i*Math.PI*2/112;
+                double ripple=Math.sin(4*a+band*3+spin)*.075+Math.cos(7*a-band*2-spin*.7)*.028;
+                double radius=r*(.68+.19*Math.cos(band+3*a+spin*.45)+ripple);
+                float x=(float)(radius*Math.cos(a)+r*.10*Math.sin(3*a+band+spin));
+                float y=(float)(radius*Math.sin(a)*.88+r*.12*Math.cos(2*a-band-spin*.8));
+                if(i==0)path.moveTo(x,y);else path.lineTo(x,y);
+            }
+            int alpha=(int)(light?34+66*Math.pow(.5+.5*Math.cos(band+spin*.3),2):30+104*Math.pow(.5+.5*Math.cos(band+spin*.3),2));
+            paint.setColor((Math.min(255,alpha)<<24)|(light?0x253430:0xE6F2EE));
+            paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(j%9==0?1.25f:.72f);
+            canvas.drawPath(path,paint);
         }
-        canvas.restore();
-        canvas.save();canvas.clipPath(shape);
-        paint.setShader(new RadialGradient(cx-radius*.32f,cy-radius*.5f,radius*1.75f,
-                new int[]{0x00CCDFFF,0x003134D0,0x551017A4,0xD809106B},new float[]{0,.48f,.76f,1},Shader.TileMode.CLAMP));
-        canvas.drawPath(shape,paint);
-        paint.setShader(new RadialGradient(cx,cy,radius*1.04f,
-                new int[]{0x00C3E9FF,0x00C3E9FF,0x55C3E9FF},new float[]{0,.88f,1},Shader.TileMode.CLAMP));
-        canvas.drawPath(shape,paint);canvas.restore();paint.setShader(null);
+        for(int j=0;j<13;j++){
+            double offset=j*Math.PI*2/13;
+            path.reset();
+            for(int i=0;i<=96;i++){
+                double a=i*Math.PI*2/96;
+                double rad=r*(.48+.19*Math.sin(3*a+offset+spin*.6));
+                float x=(float)(rad*Math.cos(a)+r*.08*Math.cos(5*a+offset));
+                float y=(float)(rad*Math.sin(a)*.9+r*.08*Math.sin(4*a-offset));
+                if(i==0)path.moveTo(x,y);else path.lineTo(x,y);
+            }
+            paint.setColor(light?0x412D3D37:0x6BEAF7F1);paint.setStrokeWidth(1.2f);canvas.drawPath(path,paint);
+        }
+        canvas.restore();paint.setStyle(Paint.Style.FILL);
     }
 }

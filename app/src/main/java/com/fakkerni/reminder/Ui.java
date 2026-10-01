@@ -10,9 +10,21 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 final class Ui {
-    static final int BG=0xFF20232B, INK=0xFF22252E, SURFACE=0xFF30343E,
-            PAPER=0xFFDEE0E7, YELLOW=0xFFB39AE4,
-            WHITE=0xFFF4F3F8, MUTED=0xFF666A76, SECONDARY=0xFFADB0BE;
+    static int BG=0xFF050607, INK=0xFF111415, SURFACE=0xFF1C2021,
+            PAPER=0xFF363C3D, YELLOW=0xFFE7ECE9,
+            WHITE=0xFFF4F7F5, MUTED=0xFF8D9693, SECONDARY=0xFFB9C1BE;
+    static void apply(Context c){
+        if(Appearance.light(c)){
+            BG=0xFFF7F8F5; INK=0xFFE7EAE6; SURFACE=0xFFFFFFFF;
+            PAPER=0xFFD9DFDA; YELLOW=0xFF202625; WHITE=0xFF151A19;
+            MUTED=0xFF6C7671; SECONDARY=0xFF58635E;
+        }else{
+            BG=0xFF050607; INK=0xFF111415; SURFACE=0xFF1C2021;
+            PAPER=0xFF363C3D; YELLOW=0xFFE7ECE9; WHITE=0xFFF4F7F5;
+            MUTED=0xFF8D9693; SECONDARY=0xFFB9C1BE;
+        }
+    }
+    static void theme(Activity a){a.setTheme(Appearance.light(a)?R.style.Theme_Fakkerni_Light:R.style.Theme_Fakkerni_Dark);}
     static String t(Context c,String ar,String en) {
         return c.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("ar")?ar:en;
     }
@@ -38,7 +50,7 @@ final class Ui {
     }
     static void space(LinearLayout row) { row.addView(new Space(row.getContext()),new LinearLayout.LayoutParams(0,1,1)); }
     static Button button(Context c,String title,int color) {
-        Button b=new Button(c); b.setText(title); b.setAllCaps(false); b.setTextColor(INK); b.setTextSize(15);
+        Button b=new Button(c); b.setText(title); b.setAllCaps(false); b.setTextColor(color==YELLOW?BG:color==PAPER||color==SURFACE||color==INK?WHITE:BG); b.setTextSize(15);
         b.setTypeface(c.getResources().getFont(R.font.cairo),Typeface.BOLD);
         b.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0x22555555),
                 rounded(color,28,c),null)); b.setMinHeight(dp(c,54)); return b;
@@ -47,7 +59,8 @@ final class Ui {
         MorphIconView v=new MorphIconView(c); v.setIcon(name,false); v.setContentDescription(label);
         v.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0x22667178),
                 rounded(background,50,c),null));
-        if(background==SURFACE||background==INK||background==Color.TRANSPARENT)v.setInk(WHITE);
+        v.setInk(background==Color.TRANSPARENT?WHITE:
+                Color.luminance(background)>.5?0xFF17201C:0xFFF3F7F4);
         int pad=dp(c,size<=48?12:16); v.setPadding(pad,pad,pad,pad);
         v.setLayoutParams(new LinearLayout.LayoutParams(dp(c,size),dp(c,size))); return v;
     }
@@ -56,6 +69,10 @@ final class Ui {
         int p=dp(c,20); l.setPadding(p,p,p,p); return l;
     }
     static void setup(Activity a,View root) {
+        boolean light=Appearance.light(a);
+        a.getWindow().setStatusBarColor(BG);a.getWindow().setNavigationBarColor(BG);
+        a.getWindow().getDecorView().setSystemUiVisibility(light?
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR:0);
         a.setContentView(root); root.setLayoutDirection(View.LAYOUT_DIRECTION_LOCALE);
         int l=root.getPaddingLeft(),t=root.getPaddingTop(),r=root.getPaddingRight(),b=root.getPaddingBottom();
         root.setOnApplyWindowInsetsListener((v,insets)->{
@@ -78,7 +95,7 @@ final class Ui {
         HeroRing(Context c){super(c);setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);}
         @Override protected void onDraw(Canvas canvas){
             float pad=dp(getContext(),7);RectF r=new RectF(pad,pad,getWidth()-pad,getHeight()-pad);
-            p.setStyle(Paint.Style.FILL);p.setColor(0xFF41404E);canvas.drawOval(r,p);
+            p.setStyle(Paint.Style.FILL);p.setColor(PAPER);canvas.drawOval(r,p);
             p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(dp(getContext(),5));p.setStrokeCap(Paint.Cap.ROUND);
             p.setColor(YELLOW);canvas.drawArc(r,-85,290,false,p);
         }
@@ -89,8 +106,8 @@ final class Ui {
         @Override protected void onDraw(Canvas c){
             super.onDraw(c);float scale=Math.min(getWidth()/200f,getHeight()/160f);
             c.save();c.translate((getWidth()-200*scale)/2,(getHeight()-160*scale)/2);c.scale(scale,scale);
-            p.setStyle(Paint.Style.FILL);p.setColor(0xFF3A454F);c.drawCircle(100,80,68,p);
-            p.setColor(0xFF829097);for(int x=26;x<182;x+=9)for(int y=17;y<148;y+=9)
+            p.setStyle(Paint.Style.FILL);p.setColor(SURFACE);c.drawCircle(100,80,68,p);
+            p.setColor(MUTED);for(int x=26;x<182;x+=9)for(int y=17;y<148;y+=9)
                 if(Math.hypot(x-100,y-80)>70)c.drawCircle(x,y,.7f,p);
             p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(14);p.setStrokeCap(Paint.Cap.ROUND);
             p.setColor(PAPER);c.drawArc(48,28,152,132,12,238,false,p);
@@ -100,7 +117,7 @@ final class Ui {
             c.restore();
         }
     }
-    /** Soft orbital arcs and spaced pin-dots. Native vector drawing keeps the APK light. */
+    /** Restrained material texture; no bitmap or large asset in the APK. */
     static final class Pattern extends Drawable {
         final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
         final int bg,fg,mode; final float density;
@@ -110,16 +127,14 @@ final class Ui {
         @Override public void draw(Canvas canvas) {
             Rect bounds=getBounds(); canvas.save();
             if(mode==0) {
+                boolean light=Color.red(BG)>128;
                 paint.setShader(new LinearGradient(0,0,bounds.width(),bounds.height(),
-                        new int[]{0xFF363A43,0xFF242730,0xFF1E2128},null,Shader.TileMode.CLAMP));
+                        light?new int[]{0xFFF9FAF8,0xFFF4F6F3,0xFFEEF1ED}:new int[]{0xFF0A0D0E,0xFF050607,0xFF0B0F0F},null,Shader.TileMode.CLAMP));
                 canvas.drawRect(bounds,paint); paint.setShader(null);
-                paint.setColor(0x08C9BAE8);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(density);
-                float cx=bounds.right-24*density,cy=bounds.top+90*density;
-                for(int ring=0;ring<3;ring++)canvas.drawCircle(cx,cy,(68+ring*26)*density,paint);
-                canvas.drawCircle(bounds.left+12*density,bounds.bottom-130*density,100*density,paint);
-                paint.setStyle(Paint.Style.FILL);paint.setColor(0x0CC9BAE8);
-                for(float x=22*density;x<bounds.width();x+=42*density)
-                    for(float y=24*density;y<bounds.height();y+=42*density)canvas.drawCircle(x,y,.8f*density,paint);
+                paint.setStyle(Paint.Style.FILL);paint.setColor(light?0x1884918A:0x24CCD9D4);
+                for(float x=25*density;x<bounds.width();x+=39*density)
+                    for(float y=33*density;y<bounds.height();y+=47*density)
+                        if(((int)(x/density)*7+(int)(y/density)*13)%11<3)canvas.drawCircle(x,y,.45f*density,paint);
             } else {
                 Path clip=new Path();clip.addRoundRect(new RectF(bounds),24*density,24*density,Path.Direction.CW);
                 canvas.clipPath(clip); paint.setColor(bg); canvas.drawRect(bounds,paint);

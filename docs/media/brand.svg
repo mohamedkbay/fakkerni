@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="شعار فكّرني">
+  <rect width="320" height="320" rx="72" fill="#050607"/>
+  <circle cx="160" cy="160" r="103" fill="none" stroke="#e7ece9" stroke-width="13"/>
+  <path d="M88 113c31-6 47 77 102 82 28 2 46-10 53-25" fill="none" stroke="#e7ece9" stroke-linecap="round" stroke-width="13"/>
+  <path d="M81 199c21 41 59 46 85 15 25-29 30-71 57-87 12-7 22-7 33-1" fill="none" stroke="#e7ece9" stroke-linecap="round" stroke-width="13"/>
+</svg>

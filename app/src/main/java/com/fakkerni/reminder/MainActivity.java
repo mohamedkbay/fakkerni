@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
     private TextView filterWeek;
     private TextView filterAll;
     private int activeFilter = 1;
+    private String appliedMode;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -43,8 +44,9 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        Ui.theme(this);super.onCreate(savedInstanceState);
         Design.main(this);
+        appliedMode=Appearance.mode(this);
         ReminderReceiver.createChannel(this);
 
         reminderList = findViewById(R.id.reminderList);
@@ -80,6 +82,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(!Appearance.mode(this).equals(appliedMode)){recreate();return;}
         renderReminders();
         renderPermissionBanner();
     }
@@ -94,7 +97,7 @@ public class MainActivity extends Activity {
         TextView[] filters = {filterToday, filterWeek, filterAll};
         for (int i = 0; i < filters.length; i++) {
             filters[i].setSelected(i == activeFilter);
-            filters[i].setTextColor(getColor(i == activeFilter ? R.color.ink : R.color.white));
+            filters[i].setTextColor(i == activeFilter ? Ui.BG : Ui.WHITE);
             filters[i].setBackground(i == activeFilter ? Ui.rounded(Ui.YELLOW,28,this)
                     : Ui.rounded(Ui.SURFACE,28,this));
         }
@@ -130,7 +133,7 @@ public class MainActivity extends Activity {
             Ui.EmptyClock clock=new Ui.EmptyClock(this);empty.addView(clock,new LinearLayout.LayoutParams(-1,dp(160)));
             TextView title=Ui.text(this,getString(R.string.nothing_today),20,Ui.WHITE);title.setGravity(Gravity.CENTER);
             Ui.add(empty,title,8);
-            TextView hint=Ui.text(this,getString(R.string.nothing_subtitle),12,0xCCFFFFFF);hint.setGravity(Gravity.CENTER);
+            TextView hint=Ui.text(this,getString(R.string.nothing_subtitle),12,Ui.SECONDARY);hint.setGravity(Gravity.CENTER);
             Ui.add(empty,hint,8);addWithTopMargin(empty,12);
             return;
         }
@@ -140,7 +143,7 @@ public class MainActivity extends Activity {
         for (Reminder reminder : visible) {
             long day = startOfDay(reminder.eventTimeMillis);
             if (day != lastDay) {
-                TextView heading = text(dayLabel(day), 15, R.color.white, Gravity.START);
+                TextView heading = Ui.text(this,dayLabel(day),15,Ui.WHITE);
                 heading.setTypeface(getResources().getFont(R.font.cairo), Typeface.BOLD);
                 addWithTopMargin(heading, lastDay == Long.MIN_VALUE ? 4 : 20);
                 lastDay = day;
@@ -150,7 +153,7 @@ public class MainActivity extends Activity {
     }
 
     private View reminderCard(Reminder reminder, int index) {
-        LinearLayout card = Ui.card(this,index % 2 == 0 ? 0xFF2B2F39 : Ui.SURFACE);
+        LinearLayout card = Ui.card(this,index % 2 == 0 ? Ui.INK : Ui.SURFACE);
         card.setOnClickListener(v -> startActivity(
                 new Intent(this, AddReminderActivity.class).putExtra("id", reminder.id)));
         LinearLayout head=Ui.row(this);
@@ -161,7 +164,7 @@ public class MainActivity extends Activity {
         labels.addView(title);
         Ui.add(labels,Ui.text(this,reminder.contactName.isEmpty()?Ui.t(this,"تذكير شخصي","Personal reminder"):reminder.contactName,12,Ui.SECONDARY),3);
         head.addView(labels,new LinearLayout.LayoutParams(0,-2,1));
-        TextView badge=Ui.text(this,Ui.t(this,"● قادم","● Upcoming"),10,Ui.INK);
+        TextView badge=Ui.text(this,Ui.t(this,"● قادم","● Upcoming"),10,Ui.BG);
         badge.setBackground(Ui.rounded(Ui.YELLOW,22,this));badge.setPadding(dp(10),dp(5),dp(10),dp(5));head.addView(badge);
         card.addView(head);
         LinearLayout details=Ui.row(this);
@@ -241,16 +244,6 @@ public class MainActivity extends Activity {
             return;
         }
         permissionBanner.setVisibility(View.GONE);
-    }
-
-    private TextView text(String value, int sizeSp, int colorRes, int gravity) {
-        TextView view = new TextView(this);
-        view.setText(Digits.latin(value));
-        view.setTextSize(sizeSp);
-        view.setTextColor(getColor(colorRes));
-        view.setGravity(gravity);
-        view.setTypeface(getResources().getFont(R.font.cairo));
-        return view;
     }
 
     private void addWithTopMargin(View view, int topDp) {
