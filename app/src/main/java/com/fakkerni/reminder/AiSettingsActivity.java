@@ -3,6 +3,8 @@ package com.fakkerni.reminder;
 import android.app.*;
 import android.content.*;
 import android.net.Uri;
+import android.media.MediaPlayer;
+import android.media.AudioAttributes;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.*;
@@ -10,6 +12,9 @@ import android.widget.*;
 
 /** Two small cards. Credentials and diagnostics appear only when requested. */
 public class AiSettingsActivity extends Activity {
+    private TextView aiStatus;
+    private Button toneButton;
+    private MediaPlayer tonePreview;
     @Override protected void attachBaseContext(Context base){super.attachBaseContext(LocaleHelper.wrap(base));}
     @Override protected void onCreate(Bundle state){
         Ui.theme(this);super.onCreate(state);getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
@@ -33,27 +38,17 @@ public class AiSettingsActivity extends Activity {
             choice.setOnClickListener(v->{Appearance.mode(this,mode);recreate();});
         }
         Ui.add(personal,modes,8);Ui.add(page,personal,16);
-        AiProvider provider=AiProvider.selected(this);AiProvider.select(this,provider);
         LinearLayout ai=Ui.card(this,Ui.SURFACE);
-        Ui.add(ai,Ui.text(this,Ui.t(this,"التسجيل الذكي","Voice AI"),21,Ui.WHITE),0);
-        LinearLayout choices=Ui.row(this);
-        for(AiProvider option:new AiProvider[]{AiProvider.GROQ,AiProvider.OPENAI}){
-            Button choose=Ui.button(this,option.label,provider==option?Ui.YELLOW:Ui.WHITE);
-            choose.setSelected(provider==option);
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);lp.setMarginEnd(Ui.dp(this,6));choices.addView(choose,lp);
-            choose.setOnClickListener(v->{if(provider!=option){AiProvider.select(this,option);recreate();}});
-        }
-        Ui.add(ai,choices,12);
-        Ui.add(ai,Ui.text(this,AiKeyStore.hasKey(this,provider)?Ui.t(this,"المفتاح محفوظ · جاهز للتجربة","Key saved · ready to try")
-                :Ui.t(this,"أضف المفتاح مرة واحدة","Add your key once"),13,Ui.SECONDARY),10);
-        Button key=Ui.button(this,AiKeyStore.hasKey(this,provider)?Ui.t(this,"تغيير المفتاح","Change key"):Ui.t(this,"إضافة المفتاح","Add key"),Ui.WHITE);
-        key.setOnClickListener(v->editKey(provider));Ui.add(ai,key,12);
-        Ui.add(ai,Ui.text(this,Ui.t(this,"الصوت والنص يُرسلان إلى ","Audio and text go to ")+provider.label
-                +Ui.t(this,". الأسماء تُطابق محلياً. راجع الموعد قبل الحفظ.",". Contacts match locally. Review before saving."),12,Ui.SECONDARY),12);
+        Ui.add(ai,Ui.text(this,Ui.t(this,"ربط الذكاء الاصطناعي","AI connections"),21,Ui.WHITE),0);
+        aiStatus=Ui.text(this,"",13,Ui.SECONDARY);Ui.add(ai,aiStatus,8);refreshAiStatus();
+        Button key=Ui.button(this,Ui.t(this,"ادخل واختار الخدمة","Connect or switch service"),Ui.YELLOW);
+        key.setOnClickListener(v->startActivity(new Intent(this,AiConnectionsActivity.class)));Ui.add(ai,key,12);
         Ui.add(page,ai,20);
         LinearLayout alerts=Ui.card(this,Ui.INK);
         Ui.add(alerts,Ui.text(this,Ui.t(this,"التنبيهات","Alerts"),21,Ui.WHITE),0);
         Ui.add(alerts,Ui.text(this,Ui.t(this,"قبل الموعد بـ1 ساعة · صوت واهتزاز","1 hour before · sound & vibration"),13,Ui.SECONDARY),6);
+        toneButton=Ui.button(this,Ui.t(this,"النغمة: ","Sound: ")+AlertTone.selected(this).label(this),Ui.PAPER);
+        toneButton.setTextColor(Ui.WHITE);toneButton.setOnClickListener(v->chooseTone());Ui.add(alerts,toneButton,12);
         Button test=Ui.button(this,Ui.t(this,"جرّب بعد 10 ثواني","Test in 10 seconds"),Ui.YELLOW);Ui.add(alerts,test,14);
         test.setOnClickListener(v->testAlarm());
         Button permissions=Ui.button(this,Ui.t(this,"الصوت وإذن الإشعارات","Sound & notification permission"),Ui.PAPER);Ui.add(alerts,permissions,8);
@@ -71,37 +66,36 @@ public class AiSettingsActivity extends Activity {
                     String value=input.getText().toString().trim();if(!value.isEmpty()){Appearance.name(this,value);recreate();}
                 }).show();
     }
-    private void editKey(AiProvider provider){
-        LinearLayout content=Ui.column(this);int pad=Ui.dp(this,20);content.setPadding(pad,pad,pad,pad);
-        Ui.add(content,Ui.text(this,provider==AiProvider.GROQ
-                ?Ui.t(this,"خطة Groq المجانية بحدود استخدام. المفتاح مشفّر على هاتفك.","Groq’s free plan has usage limits. Your key is encrypted on your phone.")
-                :Ui.t(this,"رصيد OpenAI API منفصل عن ChatGPT. المفتاح مشفّر على هاتفك.","OpenAI API billing is separate from ChatGPT. Your key is encrypted on your phone."),13,Ui.WHITE),0);
-        EditText input=new EditText(this);input.setSingleLine(true);input.setTextDirection(View.TEXT_DIRECTION_LTR);
-        input.setTypeface(getResources().getFont(R.font.cairo));input.setTextColor(Ui.WHITE);input.setHintTextColor(Ui.MUTED);
-        input.setInputType(android.text.InputType.TYPE_CLASS_TEXT|android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        input.setSaveEnabled(false);input.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO);
-        input.setHint(provider.keyPrefix+"…");input.setContentDescription(provider.label+" API key");Ui.add(content,input,12);
-        Button link=Ui.button(this,Ui.t(this,"احصل على مفتاح ","Get a ")+provider.label+Ui.t(this,""," key"),Ui.PAPER);Ui.add(content,link,12);
-        link.setOnClickListener(v->open(new Intent(Intent.ACTION_VIEW,Uri.parse(provider.keysUrl))));
-        AlertDialog.Builder builder=new AlertDialog.Builder(this).setTitle(provider.label).setView(content)
-                .setNegativeButton(android.R.string.cancel,null).setPositiveButton(Ui.t(this,"حفظ","Save"),null);
-        if(AiKeyStore.hasKey(this,provider))builder.setNeutralButton(Ui.t(this,"حذف المفتاح","Remove key"),(d,w)->
-                new AlertDialog.Builder(this).setMessage(Ui.t(this,"تحذف مفتاح ","Remove key for ")+provider.label+"؟")
-                        .setNegativeButton(android.R.string.cancel,null).setPositiveButton(android.R.string.ok,(a,b)->{AiKeyStore.remove(this,provider);recreate();}).show());
-        AlertDialog dialog=builder.create();dialog.setOnShowListener(d->{
-            dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
-                String key=input.getText().toString().trim();
-                if(!provider.accepts(key)){input.setError(Ui.t(this,"يلزم مفتاح يبدأ بـ ","Key must start with ")+provider.keyPrefix);return;}
-                try{AiKeyStore.save(this,provider,key);input.setText("");dialog.dismiss();recreate();
-                    Toast.makeText(this,Ui.t(this,"تم الحفظ. جرّب الميكروفون في تذكير جديد.","Saved. Try the microphone in a new reminder."),Toast.LENGTH_LONG).show();}
-                catch(Exception e){input.setError(Ui.t(this,"تعذّر الحفظ","Could not save key"));}
-            });
-        });dialog.show();
+    @Override protected void onResume(){super.onResume();refreshAiStatus();}
+    private void refreshAiStatus(){if(aiStatus!=null){AiProvider active=AiProvider.active(this);
+        aiStatus.setText(active==null?Ui.t(this,"ما فيش خدمة نشطة","No active service"):
+                Ui.t(this,"الخدمة النشطة: ","Active service: ")+active.label);}}
+    @Override protected void onStop(){stopTone();super.onStop();}
+    private void chooseTone(){
+        AlertTone[] tones=AlertTone.values();String[] labels=new String[tones.length];
+        for(int i=0;i<tones.length;i++)labels[i]=tones[i].label(this);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(Ui.t(this,"اختار نغمة التنبيه","Choose an alert sound"))
+                .setSingleChoiceItems(labels,AlertTone.selected(this).ordinal(),(d,which)->{
+                    AlertTone tone=tones[which];AlertTone.select(this,tone);ReminderReceiver.createChannel(this);
+                    toneButton.setText(Ui.t(this,"النغمة: ","Sound: ")+tone.label(this));previewTone(tone);
+                }).setPositiveButton(Ui.t(this,"تم","Done"),null).create();
+        dialog.setOnDismissListener(d->stopTone());dialog.show();
     }
+    private void previewTone(AlertTone tone){
+        stopTone();try{MediaPlayer player=new MediaPlayer();tonePreview=player;
+            player.setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build());
+            player.setDataSource(this,AlertTone.sound(this,tone));player.setOnCompletionListener(p->stopTone());
+            player.prepare();player.start();
+        }catch(Exception ignored){stopTone();Toast.makeText(this,Ui.t(this,"التجربة الصوتية غير متاحة. جرّب تنبيه 10 ثواني.",
+                "Preview unavailable. Try the 10-second alert."),Toast.LENGTH_SHORT).show();}
+    }
+    private void stopTone(){if(tonePreview!=null){try{tonePreview.stop();}catch(Exception ignored){}
+        tonePreview.release();tonePreview=null;}}
     private void testAlarm(){
         ReminderReceiver.createChannel(this);NotificationManager manager=getSystemService(NotificationManager.class);
-        if(!manager.areNotificationsEnabled()||manager.getNotificationChannel(ReminderReceiver.CHANNEL_ID).getImportance()==0){openNotificationSettings();return;}
+        android.app.NotificationChannel channel=manager.getNotificationChannel(ReminderReceiver.channelId(this));
+        if(!manager.areNotificationsEnabled()||channel==null||channel.getImportance()==0){openNotificationSettings();return;}
         if(!ReminderScheduler.scheduleLockScreenTest(this)){
             Toast.makeText(this,Ui.t(this,"فعّل المواعيد الدقيقة ثم أعد التجربة","Enable exact alarms, then try again"),Toast.LENGTH_LONG).show();
             if(android.os.Build.VERSION.SDK_INT>=31)open(new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,Uri.parse("package:"+getPackageName())));return;
@@ -121,6 +115,6 @@ public class AiSettingsActivity extends Activity {
                     .setPositiveButton(android.R.string.ok,null).show();
         }).show();
     }
-    private void openNotificationSettings(){open(new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE,getPackageName()).putExtra(Settings.EXTRA_CHANNEL_ID,ReminderReceiver.CHANNEL_ID));}
+    private void openNotificationSettings(){open(new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE,getPackageName()).putExtra(Settings.EXTRA_CHANNEL_ID,ReminderReceiver.channelId(this)));}
     private void open(Intent intent){try{startActivity(intent);}catch(ActivityNotFoundException e){Toast.makeText(this,Ui.t(this,"افتح إعدادات الهاتف يدوياً","Open phone settings manually"),Toast.LENGTH_LONG).show();}}
 }

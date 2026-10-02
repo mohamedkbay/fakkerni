@@ -23,6 +23,7 @@
         <activity
             android:name=".AddReminderActivity" />
         <activity android:name=".AiSettingsActivity" android:exported="false" />
+        <activity android:name=".AiConnectionsActivity" android:exported="false" />
         <activity android:name=".AssistantActivity" android:exported="false" />
 
         <activity

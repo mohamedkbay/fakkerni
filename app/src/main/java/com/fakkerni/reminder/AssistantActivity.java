@@ -12,6 +12,7 @@ public class AssistantActivity extends Activity {
     private boolean foreground;
     private VoiceDraft pendingDraft;
     private String appliedMode;
+    private TextView providerChip;
     @Override protected void attachBaseContext(Context base){super.attachBaseContext(LocaleHelper.wrap(base));}
     @Override protected void onCreate(Bundle state){
         Ui.theme(this);super.onCreate(state);appliedMode=Appearance.mode(this);
@@ -23,8 +24,14 @@ public class AssistantActivity extends Activity {
         MorphIconView back=Ui.icon(this,"back",android.graphics.Color.TRANSPARENT,Ui.t(this,"تذكيراتي","My reminders"),44);
         back.setOnClickListener(v->finish());nav.addView(back);Ui.space(nav);
         TextView brand=Ui.text(this,Appearance.name(this),15,Ui.WHITE);brand.setGravity(Gravity.CENTER);nav.addView(brand);Ui.space(nav);
+        providerChip=Ui.text(this,"",12,Ui.WHITE);providerChip.setGravity(Gravity.CENTER);
+        providerChip.setPadding(Ui.dp(this,12),0,Ui.dp(this,12),0);
+        providerChip.setBackground(Ui.rounded(Ui.SURFACE,24,this));
+        providerChip.setOnClickListener(v->startActivity(new Intent(this,AiConnectionsActivity.class)));
+        nav.addView(providerChip,new LinearLayout.LayoutParams(-2,Ui.dp(this,42)));
         MorphIconView settings=Ui.icon(this,"settings",android.graphics.Color.TRANSPARENT,Ui.t(this,"الإعدادات","Settings"),44);
         settings.setOnClickListener(v->startActivity(new Intent(this,AiSettingsActivity.class)));nav.addView(settings);root.addView(nav);
+        refreshProviderChip();
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setVerticalScrollBarEnabled(false);
         LinearLayout center=Ui.column(this);center.setGravity(Gravity.CENTER);scroll.addView(center);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
@@ -47,6 +54,8 @@ public class AssistantActivity extends Activity {
         voice=new VoiceInput(this,panel,draft->{if(foreground)openEditor(draft);else pendingDraft=draft;},true);
         voice.moveActions(center);
     }
+    private void refreshProviderChip(){if(providerChip!=null){AiProvider active=AiProvider.active(this);
+        providerChip.setText(active==null?Ui.t(this,"ربط AI","Connect AI"):active.label);}}
     private void showIntro(){
         LinearLayout root=Design.root(this),page=Ui.column(this);
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.addView(page);
@@ -90,6 +99,7 @@ public class AssistantActivity extends Activity {
     }
     @Override protected void onResume(){super.onResume();foreground=true;
         if(!Appearance.mode(this).equals(appliedMode)){recreate();return;}
+        refreshProviderChip();
         if(pendingDraft!=null){VoiceDraft draft=pendingDraft;pendingDraft=null;openEditor(draft);}
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){super.onRequestPermissionsResult(request,permissions,results);

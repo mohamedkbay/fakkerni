@@ -235,12 +235,12 @@ public class MainActivity extends Activity {
             }
         }
         android.app.NotificationManager notifications=getSystemService(android.app.NotificationManager.class);
-        android.app.NotificationChannel channel=notifications.getNotificationChannel(ReminderReceiver.CHANNEL_ID);
+        android.app.NotificationChannel channel=notifications.getNotificationChannel(ReminderReceiver.channelId(this));
         if(!notifications.areNotificationsEnabled()||channel==null||channel.getImportance()<android.app.NotificationManager.IMPORTANCE_DEFAULT||channel.getSound()==null){
             permissionBanner.setVisibility(View.VISIBLE);
             permissionMessage.setText(Ui.t(this,"راجع صوت الإشعارات باش تسمع تذكيراتك","Check notification sound so you can hear reminders"));
             permissionButton.setOnClickListener(v->startActivity(new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE,getPackageName()).putExtra(Settings.EXTRA_CHANNEL_ID,ReminderReceiver.CHANNEL_ID)));
+                    .putExtra(Settings.EXTRA_APP_PACKAGE,getPackageName()).putExtra(Settings.EXTRA_CHANNEL_ID,ReminderReceiver.channelId(this))));
             return;
         }
         permissionBanner.setVisibility(View.GONE);

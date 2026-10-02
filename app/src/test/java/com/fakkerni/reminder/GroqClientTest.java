@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 public class GroqClientTest {
     @Test public void audioRequestExplicitlyUsesArabicForBothProviders() throws Exception {
-        for(AiProvider provider:AiProvider.values()){
+        for(AiProvider provider:new AiProvider[]{AiProvider.GROQ,AiProvider.OPENAI}){
             String body=new String(new OpenAiClient(provider).transcriptionBody(new byte[]{1,2,3},"test-boundary"),java.nio.charset.StandardCharsets.UTF_8);
             assertTrue(body.contains("name=\"language\"\r\n\r\nar\r\n"));
             assertTrue(body.contains("باللهجة الليبية بالحروف العربية"));
@@ -61,6 +61,29 @@ public class GroqClientTest {
         assertTrue(AiProvider.OPENAI.accepts(openai));assertFalse(AiProvider.GROQ.accepts(openai));
         assertFalse(AiProvider.GROQ.accepts(null));assertFalse(AiProvider.GROQ.accepts(groq+"\n"));
         assertEquals("https://api.groq.com/openai/v1",AiProvider.GROQ.baseUrl);
+        assertTrue(AiProvider.GEMINI.accepts("AQ.Ab123456789012345678901234567890"));
+        assertTrue(AiProvider.GEMINI.accepts("AIza123456789012345678901234567890"));
+    }
+    @Test public void geminiSendsInlineAudioAndRequiresArabicTranscript() throws Exception {
+        JSONObject body=OpenAiClient.geminiRequestBody(new byte[]{1,2,3},
+                ZonedDateTime.parse("2026-10-02T10:00:00+02:00[Africa/Tripoli]"));
+        JSONArray parts=body.getJSONArray("contents").getJSONObject(0).getJSONArray("parts");
+        assertTrue(parts.getJSONObject(0).getString("text").contains("Arabic script"));
+        assertEquals("audio/mp4",parts.getJSONObject(1).getJSONObject("inline_data").getString("mime_type"));
+        assertEquals("AQID",parts.getJSONObject(1).getJSONObject("inline_data").getString("data"));
+        JSONObject config=body.getJSONObject("generationConfig");
+        assertEquals("application/json",config.getString("responseMimeType"));
+        assertEquals(7,config.getJSONObject("responseSchema").getJSONArray("required").length());
+    }
+    @Test public void geminiDraftUsesItsArabicTranscript() throws Exception {
+        JSONObject draft=new JSONObject().put("transcript","غدوة اتصل بأحمد").put("title","اتصال بأحمد")
+                .put("date","2026-10-03").put("time","17:00").put("phone","")
+                .put("contact_name","أحمد").put("needs_review",false);
+        String envelope=new JSONObject().put("candidates",new JSONArray().put(new JSONObject()
+                .put("finishReason","STOP").put("content",new JSONObject().put("parts",new JSONArray()
+                        .put(new JSONObject().put("text",draft.toString())))))).toString();
+        VoiceDraft parsed=OpenAiClient.parseGeminiResponse(envelope);
+        assertEquals("غدوة اتصل بأحمد",parsed.transcript);assertEquals("أحمد",parsed.contactName);
     }
     @Test(expected=OpenAiClient.ApiFailure.class) public void wrongProviderKeyRejectedBeforeUpload() throws Exception {
         new OpenAiClient(AiProvider.GROQ).transcribe(new byte[]{1},"sk-test-not-a-real-key-123456789",ZonedDateTime.now());

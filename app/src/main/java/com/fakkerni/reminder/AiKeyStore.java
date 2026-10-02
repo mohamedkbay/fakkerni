@@ -17,7 +17,7 @@ import javax.crypto.spec.GCMParameterSpec;
 final class AiKeyStore {
     private static final String ALIAS = "fakkerni.openai.v1";
     private static AtomicFile file(Context c,AiProvider provider) {
-        return new AtomicFile(new File(c.getNoBackupFilesDir(), provider==AiProvider.GROQ?"groq-key.enc":"openai-key.enc"));
+        return new AtomicFile(new File(c.getNoBackupFilesDir(), provider.keyFile));
     }
     private static SecretKey key() throws Exception {
         KeyStore store = KeyStore.getInstance("AndroidKeyStore");

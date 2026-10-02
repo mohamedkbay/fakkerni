@@ -66,18 +66,25 @@ public class SmokeInstrumentation extends Instrumentation {
                 result.putString("stream","PASS: "+checks+" assistant assertions\n");finish(Activity.RESULT_OK,result);return;
             }
             if(providersOnly){
-                check(!AiKeyStore.hasKey(c,AiProvider.OPENAI)&&!AiKeyStore.hasKey(c,AiProvider.GROQ),"No existing credentials may be replaced");
+                check(!AiKeyStore.hasKey(c,AiProvider.OPENAI)&&!AiKeyStore.hasKey(c,AiProvider.GROQ)
+                        &&!AiKeyStore.hasKey(c,AiProvider.GEMINI),"No existing credentials may be replaced");
                 String openai="sk-dummy-not-a-real-key-123456789",groq="gsk_dummy_not_a_real_key_123456789";
+                String gemini="AQ.Ab_dummy_not_a_real_key_123456789";
                 try{
                     AiKeyStore.save(c,AiProvider.OPENAI,openai);AiKeyStore.save(c,AiProvider.GROQ,groq);
+                    AiKeyStore.save(c,AiProvider.GEMINI,gemini);
                     check(openai.equals(AiKeyStore.read(c)),"Old OpenAI storage compatibility");
                     check(groq.equals(AiKeyStore.read(c,AiProvider.GROQ)),"Groq encryption round trip");
                     AiProvider.select(c,AiProvider.GROQ);check(AiProvider.selected(c)==AiProvider.GROQ,"Groq selection");
+                    AiProvider.select(c,AiProvider.GEMINI);check(AiProvider.active(c)==AiProvider.GEMINI,"One active Gemini selection");
+                    check(gemini.equals(AiKeyStore.read(c,AiProvider.GEMINI)),"Gemini encrypted storage");
                     AiKeyStore.remove(c,AiProvider.GROQ);check(!AiKeyStore.hasKey(c,AiProvider.GROQ),"Groq removal");
                     check(openai.equals(AiKeyStore.read(c)),"Groq removal leaves OpenAI untouched");
                     AiProvider.select(c,AiProvider.OPENAI);check(AiProvider.selected(c)==AiProvider.OPENAI,"OpenAI selection");
-                }finally{AiKeyStore.remove(c,AiProvider.OPENAI);AiKeyStore.remove(c,AiProvider.GROQ);AiProvider.select(c,AiProvider.GROQ);}
-                check(!AiKeyStore.hasKey(c,AiProvider.OPENAI)&&!AiKeyStore.hasKey(c,AiProvider.GROQ),"No test credentials retained");
+                }finally{AiKeyStore.remove(c,AiProvider.OPENAI);AiKeyStore.remove(c,AiProvider.GROQ);
+                    AiKeyStore.remove(c,AiProvider.GEMINI);AiProvider.select(c,AiProvider.GROQ);}
+                check(!AiKeyStore.hasKey(c,AiProvider.OPENAI)&&!AiKeyStore.hasKey(c,AiProvider.GROQ)
+                        &&!AiKeyStore.hasKey(c,AiProvider.GEMINI),"No test credentials retained");
                 result.putString("stream","PASS: "+checks+" provider assertions\n");finish(Activity.RESULT_OK,result);return;
             }
             check(ReminderStore.getAll(c).isEmpty(),"Fresh test install is required");
@@ -86,7 +93,7 @@ public class SmokeInstrumentation extends Instrumentation {
             AiKeyStore.save(c,dummy);check(dummy.equals(AiKeyStore.read(c)),"Keystore round trip");
             AiKeyStore.remove(c);check(!AiKeyStore.hasKey(c),"Credential removal");
             ReminderReceiver.createChannel(LocaleHelper.wrap(c));
-            NotificationChannel channel=c.getSystemService(NotificationManager.class).getNotificationChannel(ReminderReceiver.CHANNEL_ID);
+            NotificationChannel channel=c.getSystemService(NotificationManager.class).getNotificationChannel(ReminderReceiver.channelId(c));
             check(channel.getImportance()==NotificationManager.IMPORTANCE_HIGH,"High importance channel");
             check(channel.getSound()!=null&&channel.shouldVibrate(),"Audible and vibrating channel");
             check(channel.getAudioAttributes().getUsage()==android.media.AudioAttributes.USAGE_ALARM,"Alarm sound stream");

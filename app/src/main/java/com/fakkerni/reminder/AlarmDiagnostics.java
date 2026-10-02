@@ -24,7 +24,7 @@ final class AlarmDiagnostics {
     }
     static String report(Context c) {
         NotificationManager nm=c.getSystemService(NotificationManager.class);
-        NotificationChannel ch=nm.getNotificationChannel(ReminderReceiver.CHANNEL_ID);
+        NotificationChannel ch=nm.getNotificationChannel(ReminderReceiver.channelId(c));
         AlarmManager am=c.getSystemService(AlarmManager.class);
         AudioManager audio=c.getSystemService(AudioManager.class);
         boolean exact=Build.VERSION.SDK_INT<31||am.canScheduleExactAlarms();

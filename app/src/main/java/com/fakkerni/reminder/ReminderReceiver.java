@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioAttributes;
-import android.media.RingtoneManager;
 import android.net.Uri;
 
 import java.text.SimpleDateFormat;
@@ -17,7 +16,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class ReminderReceiver extends BroadcastReceiver {
-    static final String CHANNEL_ID = "loud_reminders_v1";
+    static final String CHANNEL_ID = "loud_reminders_v1"; // Previous release, kept for user-setting migration.
+    static String channelId(Context context){return AlertTone.selected(context).channelId;}
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -46,7 +46,8 @@ public class ReminderReceiver extends BroadcastReceiver {
         String label=intent.getBooleanExtra("test",false)?Ui.t(localizedContext,"تجربة شاشة القفل","Lock-screen test")
                 :time-System.currentTimeMillis()<59*60_000L?Ui.t(localizedContext,"موعدك قريب","Coming up soon")
                 :localizedContext.getString(R.string.hour_left);
-        Notification.Builder builder = new Notification.Builder(localizedContext, CHANNEL_ID);
+        String channelId=channelId(context);
+        Notification.Builder builder = new Notification.Builder(localizedContext, channelId);
 
         builder.setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
@@ -81,7 +82,7 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel channel=manager.getNotificationChannel(CHANNEL_ID);
+        NotificationChannel channel=manager.getNotificationChannel(channelId);
         if (manager.areNotificationsEnabled() && channel!=null && channel.getImportance()>0) {
             try {
                 manager.notify((int) (id ^ (id >>> 32)), builder.build());
@@ -93,18 +94,23 @@ public class ReminderReceiver extends BroadcastReceiver {
     static void createChannel(Context context) {
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel existing = manager.getNotificationChannel(CHANNEL_ID);
+        AlertTone tone=AlertTone.selected(context);
+        String id=tone.channelId;
+        NotificationChannel existing = manager.getNotificationChannel(id);
         if (existing != null) {
-            existing.setName(context.getString(R.string.channel_name));
+            existing.setName(context.getString(R.string.channel_name)+" · "+tone.label(context));
             existing.setDescription(context.getString(R.string.channel_description));
             manager.createNotificationChannel(existing);
             return;
         }
 
+        NotificationChannel old=manager.getNotificationChannel(CHANNEL_ID);
+        if(old==null)old=manager.getNotificationChannel(tone==AlertTone.CHIME?
+                AlertTone.PULSE.channelId:AlertTone.CHIME.channelId);
         NotificationChannel channel = new NotificationChannel(
-                CHANNEL_ID,
-                context.getString(R.string.channel_name),
-                NotificationManager.IMPORTANCE_HIGH
+                id,
+                context.getString(R.string.channel_name)+" · "+tone.label(context),
+                old!=null?old.getImportance():NotificationManager.IMPORTANCE_HIGH
         );
         channel.setDescription(context.getString(R.string.channel_description));
         channel.enableVibration(true);
@@ -113,7 +119,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         channel.setLightColor(Ui.YELLOW);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         channel.setSound(
-                alarmSound(),
+                AlertTone.sound(context,tone),
                 new AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_ALARM)
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -122,8 +128,4 @@ public class ReminderReceiver extends BroadcastReceiver {
         manager.createNotificationChannel(channel);
     }
 
-    private static Uri alarmSound() {
-        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        return sound != null ? sound : RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-    }
 }

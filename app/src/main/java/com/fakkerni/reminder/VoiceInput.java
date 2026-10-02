@@ -38,7 +38,6 @@ final class VoiceInput {
     private int generation;
     private Future<?> pending;
     private OpenAiClient client;
-    private AiProvider recordingProvider;
     private final Runnable ticker = new Runnable() {
         @Override public void run() {
             if (recorder == null) return;
@@ -116,7 +115,7 @@ final class VoiceInput {
     }
     private void requestRecording() {
         if (!AiKeyStore.hasKey(activity,AiProvider.selected(activity))) {
-            activity.startActivity(new Intent(activity, AiSettingsActivity.class)); return;
+            activity.startActivity(new Intent(activity, AiConnectionsActivity.class)); return;
         }
         if (activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             activity.requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, MICROPHONE_REQUEST);return;
@@ -133,7 +132,6 @@ final class VoiceInput {
     private void startRecording() {
         if (destroyed || busy || recorder != null) return;
         deleteAudio();completed=false;
-        recordingProvider=AiProvider.selected(activity);
         try {
             audio = File.createTempFile("voice-", ".m4a", activity.getCacheDir());
             recorder = new MediaRecorder();
@@ -171,9 +169,10 @@ final class VoiceInput {
     }
     private void upload(){
         if(busy||audio==null||recorder!=null)return;
+        final AiProvider provider=AiProvider.active(activity);
+        if(provider==null){activity.startActivity(new Intent(activity,AiConnectionsActivity.class));return;}
         busy=true;status.setText(R.string.voice_busy);update();
         final int current=++generation;final File file=audio;
-        final AiProvider provider=recordingProvider==null?AiProvider.selected(activity):recordingProvider;
         client=new OpenAiClient(provider);final OpenAiClient request=client;
         final ZonedDateTime reference=recordedAt==null?ZonedDateTime.now():recordedAt;
         pending=worker.submit(()->{

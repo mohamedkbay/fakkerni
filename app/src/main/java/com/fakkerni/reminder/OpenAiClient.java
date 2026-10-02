@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import javax.net.ssl.HttpsURLConnection;
 
 final class OpenAiClient {
@@ -13,6 +14,7 @@ final class OpenAiClient {
     static final String TEXT_MODEL = "gpt-4.1-mini";
     static final String GROQ_TRANSCRIBE_MODEL = "whisper-large-v3-turbo";
     static final String GROQ_TEXT_MODEL = "openai/gpt-oss-20b";
+    static final String GEMINI_MODEL = "gemini-3.8-flash";
     private final AiProvider provider;
     OpenAiClient(){this(AiProvider.OPENAI);}
     OpenAiClient(AiProvider provider){this.provider=provider;}
@@ -32,6 +34,8 @@ final class OpenAiClient {
     VoiceDraft transcribe(byte[] audio, String key, ZonedDateTime now) throws Exception {
         if(!provider.accepts(key))throw new ApiFailure(401);
         if(audio.length==0 || audio.length>2_000_000) throw new ApiFailure(413);
+        if(provider==AiProvider.GEMINI)return parseGeminiResponse(post("/models/"+GEMINI_MODEL+":generateContent",key,
+                "application/json",geminiRequestBody(audio,now).toString().getBytes(StandardCharsets.UTF_8)));
         String boundary="FakkerniVoiceBoundary";
         String transcript=new JSONObject(post("/audio/transcriptions",key,
                 "multipart/form-data; boundary="+boundary,transcriptionBody(audio,boundary))).optString("text","").trim();
@@ -129,6 +133,31 @@ final class OpenAiClient {
         }
         throw new ApiFailure(422);
     }
+    static JSONObject geminiRequestBody(byte[] audio,ZonedDateTime now) throws Exception {
+        JSONObject common=requestBody("",now);
+        JSONObject properties=new JSONObject();
+        properties.put("transcript",new JSONObject().put("type","string"));
+        for(String name:new String[]{"title","date","time","phone","contact_name"})
+            properties.put(name,new JSONObject().put("type","string"));
+        properties.put("needs_review",new JSONObject().put("type","boolean"));
+        JSONObject schema=new JSONObject().put("type","object").put("properties",properties)
+                .put("required",new JSONArray(new String[]{"transcript","title","date","time","phone","contact_name","needs_review"}));
+        String prompt="Transcribe this speech into Arabic script exactly as spoken, especially Libyan Arabic. "
+                +"Do not translate to English. Use ASCII digits 0-9. Put the Arabic transcript in transcript. "
+                +common.getString("instructions");
+        JSONArray parts=new JSONArray().put(new JSONObject().put("text",prompt))
+                .put(new JSONObject().put("inline_data",new JSONObject().put("mime_type","audio/mp4")
+                        .put("data",Base64.getEncoder().encodeToString(audio))));
+        return new JSONObject().put("contents",new JSONArray().put(new JSONObject().put("parts",parts)))
+                .put("generationConfig",new JSONObject().put("responseMimeType","application/json")
+                        .put("responseSchema",schema).put("thinkingConfig",new JSONObject().put("thinkingLevel","low")));
+    }
+    static VoiceDraft parseGeminiResponse(String response) throws Exception {
+        JSONObject candidate=new JSONObject(response).getJSONArray("candidates").getJSONObject(0);
+        if(!"STOP".equals(candidate.optString("finishReason")))throw new ApiFailure(422);
+        String text=candidate.getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text");
+        return VoiceDraft.parse(text);
+    }
     static VoiceDraft fallback(String transcript) throws Exception {
         return VoiceDraft.parse(new JSONObject().put("transcript",transcript)
                 .put("title",transcript.substring(0,Math.min(250,transcript.length())))
@@ -141,7 +170,9 @@ final class OpenAiClient {
         try {
             if(cancelled) throw new InterruptedException();
             c.setInstanceFollowRedirects(false); c.setConnectTimeout(15000); c.setReadTimeout(60000);
-            c.setRequestMethod("POST"); c.setRequestProperty("Authorization","Bearer "+key);
+            c.setRequestMethod("POST");
+            if(provider==AiProvider.GEMINI)c.setRequestProperty("x-goog-api-key",key);
+            else c.setRequestProperty("Authorization","Bearer "+key);
             c.setRequestProperty("Content-Type",type); c.setDoOutput(true);
             c.setFixedLengthStreamingMode(bytes.length);
             try(OutputStream out=c.getOutputStream()) { out.write(bytes); }
