@@ -17,7 +17,7 @@ import java.util.Locale;
 
 public class ReminderReceiver extends BroadcastReceiver {
     static final String CHANNEL_ID = "loud_reminders_v1"; // Previous release, kept for user-setting migration.
-    static String channelId(Context context){return AlertTone.selected(context).channelId;}
+    static String channelId(Context context){return AlertTone.selected(context).channelId(context);}
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -95,7 +95,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         AlertTone tone=AlertTone.selected(context);
-        String id=tone.channelId;
+        String id=tone.channelId(context);
         NotificationChannel existing = manager.getNotificationChannel(id);
         if (existing != null) {
             existing.setName(context.getString(R.string.channel_name)+" · "+tone.label(context));
@@ -104,9 +104,11 @@ public class ReminderReceiver extends BroadcastReceiver {
             return;
         }
 
-        NotificationChannel old=manager.getNotificationChannel(CHANNEL_ID);
-        if(old==null)old=manager.getNotificationChannel(tone==AlertTone.CHIME?
-                AlertTone.PULSE.channelId:AlertTone.CHIME.channelId);
+        String previous=AlertTone.previousChannelId(context);
+        NotificationChannel old=previous.isEmpty()?null:manager.getNotificationChannel(previous);
+        if(old==null)old=manager.getNotificationChannel("loud_reminders_chime_v1");
+        if(old==null)old=manager.getNotificationChannel("loud_reminders_pulse_v1");
+        if(old==null)old=manager.getNotificationChannel(CHANNEL_ID);
         NotificationChannel channel = new NotificationChannel(
                 id,
                 context.getString(R.string.channel_name)+" · "+tone.label(context),

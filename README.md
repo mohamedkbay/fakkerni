@@ -14,7 +14,7 @@
 
 <img src="docs/media/brand.svg" width="160" alt="Fakkerni app mark" />
 
-**v1.5.0** — One active AI connection, two original in-app alert sounds.
+**v1.5.1** — Nine compact alert sounds, plus your phone's notification tones.
 
 </div>
 
@@ -28,7 +28,7 @@ Fakkerni is a small, native Android reminder app built for quick, Arabic-first c
 
 - **Voice to reminder:** Transcribes Arabic speech, proposes an Arabic task title and local date/time, then waits for your approval. Nothing is scheduled directly from AI output.
 - **One active AI:** Connect Groq, OpenAI, or Gemini on a dedicated page. Store more than one key, but activate only one provider at a time. A connected provider switches with one tap.
-- **Simple sound choice:** Pick either of two original sounds—Chime or Pulse—and hear a preview inside the app. The 10-second test uses the selected Android notification channel.
+- **Simple sound choice:** Pick one of nine compact, user-supplied sounds with an in-app preview, or open your phone's notification-tone picker. The 10-second test uses the selected Android notification channel.
 - **Local contacts:** Search Arabic or English names and phone numbers. When speech mentions a contact, the app matches it locally; it never uploads the address book. The call action opens the dialer, not an automatic call.
 - **Reliable scheduling:** Exact alarm-clock scheduling, a high-importance notification, vibration, and a lock-screen reminder card, subject to Android permissions and the phone's sound/DND settings.
 - **Calm interface:** Dark and light modes, Cairo typeface, English digits `0–9` throughout, and locally rendered Morphicons animations.
@@ -46,7 +46,7 @@ The app name remains **فكّرني** in both interface languages. The assistant
 </tr>
 </table>
 
-[Watch the short GIF tour](docs/media/app-tour.gif). These are archived captures of the v1.3 interface, **not** screenshots of v1.5. No Android emulator image was available on the build machine for new device screenshots.
+[Watch the short GIF tour](docs/media/app-tour.gif). These are archived captures of the v1.3 interface, **not** screenshots of v1.5.1. No Android emulator image was available on the build machine for new device screenshots.
 
 ## Install
 
@@ -74,9 +74,9 @@ Audio and spoken text go to the **active** provider only. Contacts and saved rem
 
 ## Alert sounds and lock screen
 
-Settings has an in-app choice between **Chime** and **Pulse**, two small original WAV tones included in the APK. Selecting one creates its Android notification channel, because Android fixes a channel's sound at creation. Use the built-in 10-second alarm test to verify the chosen tone on your actual phone. The app cannot override Do Not Disturb, muted alarm volume, disabled notifications, or manufacturer battery restrictions. Lock-screen content can be seen by others; review your phone's privacy settings.
+Settings offers nine named alert tones supplied for this project: **Bell, Flow, Received, Message, Spark, Soft message, Modern, Quick, and Bright**. The MP3 files were reduced to mono 24 kHz / 48 kbps (about 148 KB together). Tap a name to hear it. **Choose from phone sounds…** opens Android's notification-tone picker. Use the built-in 10-second alarm test to verify the choice on your actual phone. The app cannot override Do Not Disturb, muted alarm volume, disabled notifications, or manufacturer battery restrictions. Lock-screen content can be seen by others; review your phone's privacy settings.
 
-The source for both sounds is [`scripts/generate-tones.mjs`](scripts/generate-tones.mjs). Run `node scripts/generate-tones.mjs` to regenerate them.
+Android fixes a channel's sound when it is created. Fakkerni uses stable app-provided sound URIs for the bundled tones and a distinct channel for each phone ringtone URI, so changing the selection does not try to mutate an existing channel. To recreate the compact files from the nine original MP3s, run `node scripts/prepare-alert-sounds.mjs /path/to/source-directory`. Original filenames are listed in that script. The original audio was supplied by the project owner; rights in third-party recordings remain with their respective owners.
 
 ## Build and test
 
@@ -89,7 +89,7 @@ cd fakkerni
 ./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 ```
 
-The debug APK is at `app/build/outputs/apk/debug/app-debug.apk`. No API key is needed to build or run unit tests. Device instrumentation tests under `app/src/androidTest` are intended for an isolated test emulator, not a personal phone. See the [v1.5.0 release notes](docs/releases/v1.5.0.md) for verification details.
+The debug APK is at `app/build/outputs/apk/debug/app-debug.apk`. No API key is needed to build or run unit tests. Device instrumentation tests under `app/src/androidTest` are intended for an isolated test emulator, not a personal phone. See the [v1.5.1 release notes](docs/releases/v1.5.1.md) for verification details.
 
 Morphicons assets are prebuilt; regenerate them only if needed with `npm ci --ignore-scripts && npm run icons`.
 

@@ -5,6 +5,7 @@ import android.content.*;
 import android.net.Uri;
 import android.media.MediaPlayer;
 import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.*;
@@ -12,6 +13,7 @@ import android.widget.*;
 
 /** Two small cards. Credentials and diagnostics appear only when requested. */
 public class AiSettingsActivity extends Activity {
+    private static final int PHONE_TONE_REQUEST=341;
     private TextView aiStatus;
     private Button toneButton;
     private MediaPlayer tonePreview;
@@ -73,13 +75,38 @@ public class AiSettingsActivity extends Activity {
     @Override protected void onStop(){stopTone();super.onStop();}
     private void chooseTone(){
         AlertTone[] tones=AlertTone.values();String[] labels=new String[tones.length];
-        for(int i=0;i<tones.length;i++)labels[i]=tones[i].label(this);
+        for(int i=0;i<tones.length;i++)labels[i]=tones[i]==AlertTone.PHONE?
+                Ui.t(this,"اختار من نغمات الهاتف…","Choose from phone sounds…"):tones[i].label(this);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle(Ui.t(this,"اختار نغمة التنبيه","Choose an alert sound"))
                 .setSingleChoiceItems(labels,AlertTone.selected(this).ordinal(),(d,which)->{
-                    AlertTone tone=tones[which];AlertTone.select(this,tone);ReminderReceiver.createChannel(this);
+                    AlertTone tone=tones[which];
+                    if(tone==AlertTone.PHONE){d.dismiss();openPhoneTonePicker();return;}
+                    AlertTone.select(this,tone);ReminderReceiver.createChannel(this);
                     toneButton.setText(Ui.t(this,"النغمة: ","Sound: ")+tone.label(this));previewTone(tone);
                 }).setPositiveButton(Ui.t(this,"تم","Done"),null).create();
         dialog.setOnDismissListener(d->stopTone());dialog.show();
+    }
+    private void openPhoneTonePicker(){
+        Intent picker=new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        picker.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE,RingtoneManager.TYPE_NOTIFICATION);
+        picker.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT,true);
+        picker.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT,false);
+        picker.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE,
+                Ui.t(this,"اختار نغمة من الهاتف","Choose a phone notification sound"));
+        picker.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
+                AlertTone.selected(this)==AlertTone.PHONE?AlertTone.sound(this,AlertTone.PHONE):
+                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        try{startActivityForResult(picker,PHONE_TONE_REQUEST);}
+        catch(ActivityNotFoundException e){Toast.makeText(this,Ui.t(this,"قائمة نغمات الهاتف غير متاحة","Phone sound picker unavailable"),Toast.LENGTH_LONG).show();}
+    }
+    @Override protected void onActivityResult(int request,int result,Intent data){
+        super.onActivityResult(request,result,data);
+        if(request!=PHONE_TONE_REQUEST||result!=RESULT_OK||data==null)return;
+        Uri selected=data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+        if(selected==null){Toast.makeText(this,Ui.t(this,"اختار نغمة مسموعة","Choose an audible sound"),Toast.LENGTH_SHORT).show();return;}
+        AlertTone.selectPhone(this,selected);ReminderReceiver.createChannel(this);
+        toneButton.setText(Ui.t(this,"النغمة: ","Sound: ")+AlertTone.PHONE.label(this));
+        previewTone(AlertTone.PHONE);
     }
     private void previewTone(AlertTone tone){
         stopTone();try{MediaPlayer player=new MediaPlayer();tonePreview=player;

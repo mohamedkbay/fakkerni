@@ -26,6 +26,12 @@
         <activity android:name=".AiConnectionsActivity" android:exported="false" />
         <activity android:name=".AssistantActivity" android:exported="false" />
 
+        <provider
+            android:name=".ToneProvider"
+            android:authorities="com.fakkerni.reminder.tones"
+            android:exported="true"
+            android:grantUriPermissions="true" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
