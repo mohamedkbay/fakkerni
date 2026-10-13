@@ -1,0 +1,566 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		048E83C4070CF8E5C9D3D8F5 /* tone_bright.caf in Resources */ = {isa = PBXBuildFile; fileRef = C68C6D3750B36A9EB4ACB5C3 /* tone_bright.caf */; };
+		07C1435316A2A07EBEDB2EA4 /* Visuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5333BEF2F8467BAD6D3E1605 /* Visuals.swift */; };
+		13B8697BC056E8A6A55ED401 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 991291DF815461FE6DB0D8E7 /* Assets.xcassets */; };
+		2EB317DE7F18C5A853B45AE9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6A11106286F872B101653B2 /* InfoPlist.strings */; };
+		33117653CFACF2E6506023B4 /* cairo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 47CCB92CCC6975814D46138C /* cairo.ttf */; };
+		355D893B69407A28F4B87A3C /* Cairo-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = DDC1087160244C605CD7BE8E /* Cairo-OFL.txt */; };
+		4C8A391E1CEDF87201A803A9 /* morphicons.json in Resources */ = {isa = PBXBuildFile; fileRef = E9E1D7FC1DC7E0634C228324 /* morphicons.json */; };
+		59A4AAA780A6C485FF1D0F70 /* ReminderScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081BEE822FEDCB6A25ECA30A /* ReminderScreens.swift */; };
+		633B51171FE0226140292DD1 /* tone_soft_message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 8166651EBE31C29CD270B639 /* tone_soft_message.caf */; };
+		6D6B5BA774D8C581030062CA /* FakkerniUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56AF44DF7CB7762FBA29B37E /* FakkerniUITests.swift */; };
+		6E76C8D74265347E63F6235D /* tone_spark.caf in Resources */ = {isa = PBXBuildFile; fileRef = 039375948C587C69CBB9AE12 /* tone_spark.caf */; };
+		6FBE324408698F9510479326 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153732608F14B7ECD2AC03EF /* Notifications.swift */; };
+		7058FCFB1AE074F32A545CA3 /* tone_flow.caf in Resources */ = {isa = PBXBuildFile; fileRef = 13FD620134382FCDAE7BD103 /* tone_flow.caf */; };
+		863DD5590AD87AA5A4FD82EE /* SettingsScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9C7E39A033CBFE6DB4B72C /* SettingsScreens.swift */; };
+		963489137CDF880D5D567F24 /* tone_bell.caf in Resources */ = {isa = PBXBuildFile; fileRef = 749793AD31C8C249371854C9 /* tone_bell.caf */; };
+		963C8D02263A58BCD27E9607 /* FakkerniCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1FDD04070A102798B5DC7C71 /* FakkerniCore */; };
+		9DFD009CDAE5362CFCB30BF2 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5662FCE25E690ED1221C79C1 /* VoiceRecorder.swift */; };
+		A03332254F4F4C53B1C8EA71 /* tone_message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1D12372198A49AC5AEB36B56 /* tone_message.caf */; };
+		AE12172E1199BB0944DFD629 /* tone_quick.caf in Resources */ = {isa = PBXBuildFile; fileRef = E6843EBA213ADAF5B417C166 /* tone_quick.caf */; };
+		B53945ED9E1DF2F2AFCBCA2D /* MORPHICONS-LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = F1F295B285390F19BDCE91B0 /* MORPHICONS-LICENSE.txt */; };
+		B74DC2F6FC6BA322845DF19F /* tone_received.caf in Resources */ = {isa = PBXBuildFile; fileRef = 34B540CFDEDE69DB6979DFDE /* tone_received.caf */; };
+		C685CE19F5037643BB8F39EA /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C1D2CE9748D63F07970A05 /* AppModel.swift */; };
+		CAA3FF8397AE25E49E09AC9E /* FakkerniApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046B45AD3C3A524571F5E453 /* FakkerniApp.swift */; };
+		CD97A0E8ACBBD1C947650692 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D3F0BFF5B58F19DB52C8BCAE /* PrivacyInfo.xcprivacy */; };
+		CF6E2E730FBD09EB75A2E9B3 /* tone_modern.caf in Resources */ = {isa = PBXBuildFile; fileRef = 3603E260A642CC63ED11202A /* tone_modern.caf */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A06D80C4CCA8E5E59D4F7BF0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 945891B6625568857B5FBBAA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14D5924DCDA357C4660C8C28;
+			remoteInfo = Fakkerni;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		039375948C587C69CBB9AE12 /* tone_spark.caf */ = {isa = PBXFileReference; path = tone_spark.caf; sourceTree = "<group>"; };
+		046B45AD3C3A524571F5E453 /* FakkerniApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakkerniApp.swift; sourceTree = "<group>"; };
+		081BEE822FEDCB6A25ECA30A /* ReminderScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScreens.swift; sourceTree = "<group>"; };
+		12C1D2CE9748D63F07970A05 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		13FD620134382FCDAE7BD103 /* tone_flow.caf */ = {isa = PBXFileReference; path = tone_flow.caf; sourceTree = "<group>"; };
+		153732608F14B7ECD2AC03EF /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		1A1BD009D3B6E24E56B0BC45 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1D12372198A49AC5AEB36B56 /* tone_message.caf */ = {isa = PBXFileReference; path = tone_message.caf; sourceTree = "<group>"; };
+		34B540CFDEDE69DB6979DFDE /* tone_received.caf */ = {isa = PBXFileReference; path = tone_received.caf; sourceTree = "<group>"; };
+		3603E260A642CC63ED11202A /* tone_modern.caf */ = {isa = PBXFileReference; path = tone_modern.caf; sourceTree = "<group>"; };
+		3E85EF872540CE48C7A77687 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		47CCB92CCC6975814D46138C /* cairo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cairo.ttf; sourceTree = "<group>"; };
+		4DA620F33A9613BD7A079758 /* FakkerniUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FakkerniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5333BEF2F8467BAD6D3E1605 /* Visuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Visuals.swift; sourceTree = "<group>"; };
+		5662FCE25E690ED1221C79C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
+		56AF44DF7CB7762FBA29B37E /* FakkerniUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakkerniUITests.swift; sourceTree = "<group>"; };
+		749793AD31C8C249371854C9 /* tone_bell.caf */ = {isa = PBXFileReference; path = tone_bell.caf; sourceTree = "<group>"; };
+		7B9C7E39A033CBFE6DB4B72C /* SettingsScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreens.swift; sourceTree = "<group>"; };
+		8166651EBE31C29CD270B639 /* tone_soft_message.caf */ = {isa = PBXFileReference; path = tone_soft_message.caf; sourceTree = "<group>"; };
+		991291DF815461FE6DB0D8E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BAED1B281A80E2555EA16F57 /* ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ios; path = .; sourceTree = SOURCE_ROOT; };
+		C55751211BE112DBD0746111 /* Fakkerni.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Fakkerni.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C68C6D3750B36A9EB4ACB5C3 /* tone_bright.caf */ = {isa = PBXFileReference; path = tone_bright.caf; sourceTree = "<group>"; };
+		D3F0BFF5B58F19DB52C8BCAE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		DDC1087160244C605CD7BE8E /* Cairo-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Cairo-OFL.txt"; sourceTree = "<group>"; };
+		E6843EBA213ADAF5B417C166 /* tone_quick.caf */ = {isa = PBXFileReference; path = tone_quick.caf; sourceTree = "<group>"; };
+		E9E1D7FC1DC7E0634C228324 /* morphicons.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = morphicons.json; sourceTree = "<group>"; };
+		F1F295B285390F19BDCE91B0 /* MORPHICONS-LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MORPHICONS-LICENSE.txt"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FB1BC5BC2D8AE39C4BE83142 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				963C8D02263A58BCD27E9607 /* FakkerniCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05241103E5A639F00353C51C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				991291DF815461FE6DB0D8E7 /* Assets.xcassets */,
+				DDC1087160244C605CD7BE8E /* Cairo-OFL.txt */,
+				47CCB92CCC6975814D46138C /* cairo.ttf */,
+				F1F295B285390F19BDCE91B0 /* MORPHICONS-LICENSE.txt */,
+				E9E1D7FC1DC7E0634C228324 /* morphicons.json */,
+				D3F0BFF5B58F19DB52C8BCAE /* PrivacyInfo.xcprivacy */,
+				749793AD31C8C249371854C9 /* tone_bell.caf */,
+				C68C6D3750B36A9EB4ACB5C3 /* tone_bright.caf */,
+				13FD620134382FCDAE7BD103 /* tone_flow.caf */,
+				1D12372198A49AC5AEB36B56 /* tone_message.caf */,
+				3603E260A642CC63ED11202A /* tone_modern.caf */,
+				E6843EBA213ADAF5B417C166 /* tone_quick.caf */,
+				34B540CFDEDE69DB6979DFDE /* tone_received.caf */,
+				8166651EBE31C29CD270B639 /* tone_soft_message.caf */,
+				039375948C587C69CBB9AE12 /* tone_spark.caf */,
+				B6A11106286F872B101653B2 /* InfoPlist.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		24DA922C7551E3AF16490A92 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				12C1D2CE9748D63F07970A05 /* AppModel.swift */,
+				046B45AD3C3A524571F5E453 /* FakkerniApp.swift */,
+				153732608F14B7ECD2AC03EF /* Notifications.swift */,
+				081BEE822FEDCB6A25ECA30A /* ReminderScreens.swift */,
+				7B9C7E39A033CBFE6DB4B72C /* SettingsScreens.swift */,
+				5333BEF2F8467BAD6D3E1605 /* Visuals.swift */,
+				5662FCE25E690ED1221C79C1 /* VoiceRecorder.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		5EA53346614086FB60B138D2 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				BAED1B281A80E2555EA16F57 /* ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		6AA2FB723CA62F84108DFBE4 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				56AF44DF7CB7762FBA29B37E /* FakkerniUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		73038792B0D023595D76BA5D = {
+			isa = PBXGroup;
+			children = (
+				24DA922C7551E3AF16490A92 /* App */,
+				5EA53346614086FB60B138D2 /* Packages */,
+				05241103E5A639F00353C51C /* Resources */,
+				6AA2FB723CA62F84108DFBE4 /* UITests */,
+				F2B72FF56AF9FB46911868FF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F2B72FF56AF9FB46911868FF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C55751211BE112DBD0746111 /* Fakkerni.app */,
+				4DA620F33A9613BD7A079758 /* FakkerniUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		079C545F3B7086D4D3F6217E /* FakkerniUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B2B3C9E0506CB6106F22981C /* Build configuration list for PBXNativeTarget "FakkerniUITests" */;
+			buildPhases = (
+				FE036F6877DF624961107F7A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DB1B04D8F94E419B5CA7E775 /* PBXTargetDependency */,
+			);
+			name = FakkerniUITests;
+			packageProductDependencies = (
+			);
+			productName = FakkerniUITests;
+			productReference = 4DA620F33A9613BD7A079758 /* FakkerniUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		14D5924DCDA357C4660C8C28 /* Fakkerni */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 013F27C55FAFFE88EF90C4B2 /* Build configuration list for PBXNativeTarget "Fakkerni" */;
+			buildPhases = (
+				958C8E2A596B35C4EE6A88E8 /* Sources */,
+				837B7D4AFE8248351A6D7900 /* Resources */,
+				FB1BC5BC2D8AE39C4BE83142 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Fakkerni;
+			packageProductDependencies = (
+				1FDD04070A102798B5DC7C71 /* FakkerniCore */,
+			);
+			productName = Fakkerni;
+			productReference = C55751211BE112DBD0746111 /* Fakkerni.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		945891B6625568857B5FBBAA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					079C545F3B7086D4D3F6217E = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = 14D5924DCDA357C4660C8C28;
+					};
+					14D5924DCDA357C4660C8C28 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 24D8B12A136DFDB2C0148CA6 /* Build configuration list for PBXProject "Fakkerni" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				ar,
+				en,
+			);
+			mainGroup = 73038792B0D023595D76BA5D;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				1D60CA6F53338CEED982DDA8 /* XCLocalSwiftPackageReference "." */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F2B72FF56AF9FB46911868FF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				14D5924DCDA357C4660C8C28 /* Fakkerni */,
+				079C545F3B7086D4D3F6217E /* FakkerniUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		837B7D4AFE8248351A6D7900 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13B8697BC056E8A6A55ED401 /* Assets.xcassets in Resources */,
+				355D893B69407A28F4B87A3C /* Cairo-OFL.txt in Resources */,
+				2EB317DE7F18C5A853B45AE9 /* InfoPlist.strings in Resources */,
+				B53945ED9E1DF2F2AFCBCA2D /* MORPHICONS-LICENSE.txt in Resources */,
+				CD97A0E8ACBBD1C947650692 /* PrivacyInfo.xcprivacy in Resources */,
+				33117653CFACF2E6506023B4 /* cairo.ttf in Resources */,
+				4C8A391E1CEDF87201A803A9 /* morphicons.json in Resources */,
+				963489137CDF880D5D567F24 /* tone_bell.caf in Resources */,
+				048E83C4070CF8E5C9D3D8F5 /* tone_bright.caf in Resources */,
+				7058FCFB1AE074F32A545CA3 /* tone_flow.caf in Resources */,
+				A03332254F4F4C53B1C8EA71 /* tone_message.caf in Resources */,
+				CF6E2E730FBD09EB75A2E9B3 /* tone_modern.caf in Resources */,
+				AE12172E1199BB0944DFD629 /* tone_quick.caf in Resources */,
+				B74DC2F6FC6BA322845DF19F /* tone_received.caf in Resources */,
+				633B51171FE0226140292DD1 /* tone_soft_message.caf in Resources */,
+				6E76C8D74265347E63F6235D /* tone_spark.caf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		958C8E2A596B35C4EE6A88E8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C685CE19F5037643BB8F39EA /* AppModel.swift in Sources */,
+				CAA3FF8397AE25E49E09AC9E /* FakkerniApp.swift in Sources */,
+				6FBE324408698F9510479326 /* Notifications.swift in Sources */,
+				59A4AAA780A6C485FF1D0F70 /* ReminderScreens.swift in Sources */,
+				863DD5590AD87AA5A4FD82EE /* SettingsScreens.swift in Sources */,
+				07C1435316A2A07EBEDB2EA4 /* Visuals.swift in Sources */,
+				9DFD009CDAE5362CFCB30BF2 /* VoiceRecorder.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE036F6877DF624961107F7A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D6B5BA774D8C581030062CA /* FakkerniUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DB1B04D8F94E419B5CA7E775 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14D5924DCDA357C4660C8C28 /* Fakkerni */;
+			targetProxy = A06D80C4CCA8E5E59D4F7BF0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B6A11106286F872B101653B2 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A1BD009D3B6E24E56B0BC45 /* ar */,
+				3E85EF872540CE48C7A77687 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		491FD68546F5EA5C6534AC9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fakkerni.reminder.ios;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5DE86D50762D348C948D99BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fakkerni.reminder.ios.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Fakkerni;
+			};
+			name = Debug;
+		};
+		7719308216C621CF646DE101 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 12;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.6.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		89AF75B7F1055B4ABB73AE5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fakkerni.reminder.ios;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B5AEB7119F08274E081D4633 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fakkerni.reminder.ios.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Fakkerni;
+			};
+			name = Release;
+		};
+		EB8856129CB24D2570D514D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 12;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.6.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		013F27C55FAFFE88EF90C4B2 /* Build configuration list for PBXNativeTarget "Fakkerni" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				491FD68546F5EA5C6534AC9D /* Debug */,
+				89AF75B7F1055B4ABB73AE5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		24D8B12A136DFDB2C0148CA6 /* Build configuration list for PBXProject "Fakkerni" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB8856129CB24D2570D514D7 /* Debug */,
+				7719308216C621CF646DE101 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B2B3C9E0506CB6106F22981C /* Build configuration list for PBXNativeTarget "FakkerniUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DE86D50762D348C948D99BA /* Debug */,
+				B5AEB7119F08274E081D4633 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		1D60CA6F53338CEED982DDA8 /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1FDD04070A102798B5DC7C71 /* FakkerniCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FakkerniCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 945891B6625568857B5FBBAA /* Project object */;
+}

@@ -1,0 +1,38 @@
+name: iOS build and tests
+on:
+  push:
+    branches: [main]
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode version
+        run: xcodebuild -version
+      - name: Core tests
+        run: swift test --package-path ios
+      - name: Install project generator
+        run: brew install xcodegen
+      - name: Build, test, and capture native screens
+        run: bash ios/Scripts/ci.sh
+      - name: Upload iOS builds and verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fakkerni-ios
+          path: |
+            ios/output/fakkerni-ios-unsigned.ipa
+            ios/output/screenshots
+            ios/output/*.log
+            ios/output/UITests.xcresult
+          retention-days: 14

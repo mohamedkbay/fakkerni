@@ -1,0 +1,3 @@
+"CFBundleDisplayName" = "فكّرني";
+"NSMicrophoneUsageDescription" = "Fakkerni records only while you use the recording button, to prepare a reminder you review and approve.";
+"NSContactsUsageDescription" = "Fakkerni searches names and numbers on this device to link a person you choose. Your address book is never sent to AI.";

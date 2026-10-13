@@ -23,3 +23,24 @@ captures/
 !.env.example
 *.log
 *.gesture-telemetry.json
+
+# iOS signing, local builds, and Xcode user state.
+ios/.build/
+ios/.swiftpm/
+ios/output/
+**/DerivedData/
+**/xcuserdata/
+*.xcuserstate
+*.xcresult/
+*.ipa
+*.mobileprovision
+*.cer
+
+# Understand-Anything local analysis scratch (published graphs remain trackable).
+.ua/intermediate/
+.ua/tmp/
+.ua/.trash-*/
+.ua/diff-overlay.json
+
+# Local visual-review copies; curated screenshots are in docs/media/ios.
+.impeccable/review/

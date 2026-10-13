@@ -1,0 +1,54 @@
+name: Fakkerni
+options:
+  bundleIdPrefix: com.fakkerni
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+packages:
+  FakkerniCore:
+    path: .
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.6.0"
+    CURRENT_PROJECT_VERSION: "12"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+targets:
+  Fakkerni:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: Resources
+        buildPhase: resources
+    dependencies:
+      - package: FakkerniCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fakkerni.reminder.ios
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_FILE: Info.plist
+        SUPPORTS_MACCATALYST: NO
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+  FakkerniUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: Fakkerni
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fakkerni.reminder.ios.uitests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Fakkerni:
+    build:
+      targets:
+        Fakkerni: all
+        FakkerniUITests: [test]
+    test:
+      targets: [FakkerniUITests]
+      gatherCoverageData: true

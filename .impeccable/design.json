@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T15:16:56Z",
+  "title": "Design System: Fakkerni iOS",
+  "extensions": {
+    "colorMeta": {
+      "background-dark": { "role": "neutral", "displayName": "Dark ground" },
+      "background-light": { "role": "neutral", "displayName": "Light ground" },
+      "surface-dark": { "role": "neutral", "displayName": "Dark surface" },
+      "surface-light": { "role": "neutral", "displayName": "Light surface" },
+      "accent-dark": { "role": "primary", "displayName": "Dark appearance action" },
+      "accent-light": { "role": "primary", "displayName": "Light appearance action" },
+      "inverse-dark": { "role": "neutral", "displayName": "Dark appearance action content" },
+      "inverse-light": { "role": "neutral", "displayName": "Light appearance action content" },
+      "secondary-dark": { "role": "neutral", "displayName": "Dark supporting text" },
+      "secondary-light": { "role": "neutral", "displayName": "Light supporting text" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Onboarding display", "purpose": "Relative to SwiftUI largeTitle." },
+      "title": { "displayName": "Assistant title", "purpose": "Relative to SwiftUI title." },
+      "headline": { "displayName": "Reminder headline", "purpose": "Relative to SwiftUI headline." },
+      "body": { "displayName": "Body", "purpose": "Root inherited font, relative to SwiftUI body." },
+      "subheadline": { "displayName": "Supporting content", "purpose": "Relative to SwiftUI subheadline." },
+      "caption": { "displayName": "Guidance", "purpose": "Relative to SwiftUI caption." },
+      "metadata": { "displayName": "Metadata", "purpose": "Relative to caption or caption2 at the point of use." },
+      "provider-label": { "displayName": "Provider status", "purpose": "Relative to caption2 in the compact provider capsule." }
+    },
+    "motion": [
+      { "name": "orb-timeline", "value": "SwiftUI TimelineView minimumInterval: 1/30 second; 11-second phase cycle", "purpose": "Continuous Canvas sculpture movement. Paused for Reduce Motion, UI tests and inactive scenes." },
+      { "name": "orb-processing", "value": "phase multiplier: 2.3", "purpose": "Accelerates the sculpture during processing." },
+      { "name": "orb-recording", "value": "radius: min(width,height) × (0.375 + amplitude × 0.018); resting multiplier: 0.365", "purpose": "Responds to recorded input amplitude." },
+      { "name": "morphicon-transition", "value": "TimelineView minimumInterval: 1/30 second; source frame index: elapsed × 60; transition window: 0.7 seconds", "purpose": "Plays the bundled Morphicons transition data after a name change; static under Reduce Motion and UI tests." },
+      { "name": "morphicon-spin", "value": "360 degrees per 1.2 seconds", "purpose": "Loader rotation while processing; disabled under Reduce Motion and UI tests." },
+      { "name": "primary-button-state", "value": "pressed background opacity: 0.75; disabled control opacity: 0.45", "purpose": "Immediate ButtonStyle state feedback; no authored transition duration." }
+    ],
+    "nativePlatform": {
+      "framework": "SwiftUI with UIKit system browser integration",
+      "dimensions": "DESIGN.md dimensions are native points before Dynamic Type scaling, not CSS pixels.",
+      "sourceFiles": ["ios/App/Visuals.swift", "ios/App/FakkerniApp.swift", "ios/App/ReminderScreens.swift", "ios/App/SettingsScreens.swift"],
+      "componentRendering": "Descriptive native entries only. No HTML/CSS simulation of SwiftUI controls.",
+      "tonalRamps": "No synthetic ramps: the source defines paired appearance colors, not an authored tonal scale.",
+      "shadows": "No app-authored shadow tokens; native presentations own their depth.",
+      "breakpoints": "No authored viewport breakpoints; SwiftUI container sizing and Dynamic Type drive layout.",
+      "review": "Ship disposition across 14 supplied captures; no material fixes within publication scope. Real-key verification, hardware notifications and hardware animation performance are outside that visual review."
+    }
+  },
+  "components": [
+    { "name": "Primary button — dark", "kind": "button", "refersTo": "button-primary-dark", "description": "PrimaryButtonStyle capsule with inverse text, a minimum touch height, pressed and disabled opacity, and native progress states." },
+    { "name": "Primary button — light", "kind": "button", "refersTo": "button-primary-light", "description": "The same native button geometry in the light appearance." },
+    { "name": "Secondary capture control", "kind": "button", "description": "Surface-colored circular keyboard or reminders action flanking the recording control." },
+    { "name": "Reminder fields", "kind": "input", "description": "Native Form TextField, multiline title, phone keyboard and SecureField patterns; platform focus and validation copy." },
+    { "name": "Provider navigation capsule", "kind": "nav", "description": "Native toolbar entry combines the existing vector brand mark, assistant name and provider status; opens a focused connection sheet." },
+    { "name": "Native day shortcuts", "kind": "button", "description": "Today and Tomorrow use SwiftUI bordered buttons with large control size; no custom chip renderer." },
+    { "name": "Reminder row", "kind": "card", "description": "Inset-grouped native row with circular Morphicon field, title, optional contact, divider and date/status line; supports native swipes and context menu." },
+    { "name": "Silver assistant", "kind": "custom", "description": "Canvas wire sculpture with overlapping translucent bands, recording amplitude response, processing movement and Reduce Motion support." },
+    { "name": "Recording action", "kind": "button", "description": "Circular primary action with outer ring and real Morphicons microphone, stop and loader states; hold/release and VoiceOver toggle input." }
+  ],
+  "narrative": {
+    "northStar": "The Silver Assistant",
+    "overview": "Fakkerni preserves the established Cairo, monochrome, silver-orb and Morphicons identity in a native SwiftUI interface. The wire sculpture provides the expressive center; quiet surfaces and readable Arabic and English support the reminder work around it.\n\nThis is the implemented iOS system, extracted from `ios/App/Visuals.swift`, `FakkerniApp.swift`, `ReminderScreens.swift`, and `SettingsScreens.swift`. The approved identity is recorded in `PRODUCT.md`; surface composition belongs in `docs/ios-surface.md`. The finish review reports ship across all 14 supplied captures, with no material fixes in publication scope. Native dimensions here are SwiftUI points, not CSS pixels. System controls retain their platform behavior.",
+    "keyCharacteristics": [
+      "Cairo across Arabic and English, with Western digits.",
+      "Near-black and near-white grounds with neutral action contrast.",
+      "A silver wire sculpture and the existing vector mark.",
+      "Native navigation, grouped forms, sheets and accessible controls."
+    ],
+    "rules": [
+      { "name": "The Neutral Identity Rule", "body": "Keep brand surfaces and ordinary actions monochrome. Native destructive and validation states retain their semantic treatment.", "section": "colors" },
+      { "name": "The Bilingual Voice Rule", "body": "Use Cairo for authored Arabic and English content, preserve Western digits, and follow the selected layout direction.", "section": "typography" },
+      { "name": "The Tonal Surface Rule", "body": "Use background and surface roles to distinguish app-owned containers; preserve native presentation depth for system controls.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do preserve Cairo, Western digits and the selected Arabic or English layout direction.",
+      "Do use native scrolling, forms, sheets and safe-area actions with Dynamic Type.",
+      "Do reuse the actual Morphicons data, vector mark and Canvas silver sculpture.",
+      "Do show validation and pending states before allowing approval or provider activation."
+    ],
+    "donts": [
+      "Don't introduce emoji or bright yellow UI.",
+      "Don't invent fixed corner radii, CSS breakpoints or shadows for native controls.",
+      "Don't turn semantic error or completion colors into brand accents.",
+      "Don't use an account-site visit as the visual proof of a verified connection."
+    ]
+  }
+}
