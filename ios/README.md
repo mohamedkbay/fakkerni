@@ -19,7 +19,7 @@ A paid Apple Developer membership enables Ad Hoc distribution to registered devi
 ## Use
 
 - First choose your assistant's name, language, and appearance.
-- Open **AI connections**, choose Groq, OpenAI, or Gemini, enter your own key, and tap **Verify & connect**. Verification checks model access without sending audio. Only one provider is active; requests never silently fall back to another provider.
+- Open **AI connections** and choose Groq, OpenAI, or Gemini. Tap **Sign in or create account** to open the provider's official site in the system browser inside the app. Sign in or register there, create an API key, and copy it. Close the browser, paste the key, then tap **Verify & connect**. If you already have a key, choose **I have a key — continue**. Verification checks model access without sending audio. Only one provider is active; requests never silently fall back to another provider.
 - Hold the microphone while you speak in Libyan Arabic, then release. A recording lasts at most 60 seconds. With VoiceOver, double-tap to start and again to stop. You can cancel processing or type instead.
 - Review the transcript, task, event time, and person. A missing or ambiguous date/time stays unselected. Nothing is scheduled until you approve it.
 - Choose a person by searching Arabic names, English names, or digits. Cross-script common-name matching is local and approximate. Multiple matches require a choice; the app never asks AI to invent a phone number or uploads the address book.
@@ -45,6 +45,8 @@ The iOS companion permits up to **60 upcoming reminders** so it stays within the
 The app sends only the recording/transcript and current time/time zone to the selected provider. Spoken names/numbers are part of that content; the address book is not sent. Provider account policies, retention, pricing, quotas, and model permissions still apply. A successful transcription is retained as an editable draft if separate time extraction fails. API responses cannot schedule reminders directly.
 
 Keys live in **Keychain**, unlocked-device-only and not migratable to another device. The source and binaries contain no keys. Temporary recordings are deleted after reading or cancellation; recording/processing is cancelled when the app leaves the foreground or audio is interrupted. There is no Android/iOS reminder sync or automatic key transfer. The iOS app has its own local JSON store.
+
+Account creation/sign-in happens on the provider's site through `SFSafariViewController`. Fakkerni cannot see the password, page content, or browser cookies. Returning from the site does not mark a service connected: an explicitly pasted, verified API key is required. This is a guided API-key connection, not OAuth or a ChatGPT/Gemini subscription login. Clipboard access occurs only through the system paste control or the field's Paste action.
 
 ## Build and verify
 

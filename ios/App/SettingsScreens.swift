@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import SafariServices
 import FakkerniCore
 
 struct SettingsScreen: View {
@@ -84,7 +85,7 @@ struct ConnectionsScreen: View {
     var body: some View {
         List {
             Section {
-                Text(model.t("اربط بالمفتاح مرة واحدة، وفعّل مزود واحد فقط. التسجيل يمشي للمزود المفعّل وحده.", "Save your key once and activate one provider. Recordings go only to the active provider."))
+                Text(model.t("اختار الخدمة، ادخل لحسابك أو افتح حساب جديد، واربطه مرة واحدة. خدمة واحدة فقط تكون مفعّلة.", "Choose a service, sign in or create an account, then connect it once. Only one service is active at a time."))
                     .foregroundStyle(.secondary)
             }.listRowBackground(Color.clear)
             ForEach(AIProvider.allCases) { provider in
@@ -95,7 +96,6 @@ struct ConnectionsScreen: View {
                         Button(model.t("تغيير المفتاح", "Change key")) { connecting = provider }
                         Button(model.t("فصل الربط", "Disconnect"), role: .destructive) { removing = provider }
                     } else { Button(model.t("ربط ", "Connect ") + provider.label) { connecting = provider }.accessibilityIdentifier("connect-" + provider.rawValue) }
-                    Link(model.t("ناخذ مفتاح من المنصة", "Get a key from the provider"), destination: provider.keysURL)
                 }.listRowBackground(Palette.surface)
             }
             Section { Text(model.t("الأسماء والتذكيرات يبقوا على جهازك. المفاتيح محفوظة في Keychain. الكتابة اليدوية ما تحتاجش AI.", "Contacts and reminders stay on your device. Keys are saved in Keychain. Manual entry needs no AI.")) }.font(.cairo(13, relativeTo: .caption)).foregroundStyle(.secondary).listRowBackground(Color.clear)
@@ -116,18 +116,50 @@ struct ConnectionEditor: View {
     @State private var verifying = false
     @State private var failure: String?
     @State private var task: Task<Void, Never>?
+    @State private var enteringKey = false
+    @State private var showingAccount = false
     var body: some View {
         NavigationStack {
             Form {
-                Section(provider.label) {
-                    SecureField("API key", text: $key).textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.asciiCapable).privacySensitive().environment(\.layoutDirection, .leftToRight).accessibilityIdentifier("api-key")
-                    Link(model.t("افتح صفحة المفاتيح", "Open the key page"), destination: provider.keysURL)
+                Section {
+                    HStack(spacing: 14) {
+                        BrandMark().frame(width: 32, height: 32).accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(provider.label).font(.cairo(24, relativeTo: .title2))
+                            Text(model.t(enteringKey ? "آخر خطوة للربط" : "مساعدك، بحسابك", enteringKey ? "One last step to connect" : "Your assistant, your account")).foregroundStyle(.secondary)
+                        }
+                    }.padding(.vertical, 8)
+                    Text(model.t("تسجيل الدخول يصير في موقع الخدمة الرسمي. بعده أنشئ مفتاح API وانسخه؛ كلمة مرورك تبقى عند الخدمة.", "Sign in on the provider’s official website, then create and copy an API key. Your password stays with the provider."))
+                        .font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(.secondary)
+                    Button { showingAccount = true } label: {
+                        HStack {
+                            Text(model.t("ادخل أو افتح حساب", "Sign in or create account"))
+                            Spacer()
+                            MorphIcon(name: "back").rotationEffect(.degrees(135)).frame(width: 22, height: 22).accessibilityHidden(true)
+                        }.frame(minHeight: 44)
+                    }.accessibilityIdentifier("provider-account").disabled(verifying)
+                    Text(provider.keysURL.host ?? "").font(.cairo(12, relativeTo: .caption)).foregroundStyle(.secondary).environment(\.layoutDirection, .leftToRight)
+                }.listRowBackground(Palette.surface)
+                if enteringKey {
+                    Section {
+                        SecureField("API key", text: $key).textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.asciiCapable).privacySensitive().environment(\.layoutDirection, .leftToRight).accessibilityIdentifier("api-key").disabled(verifying)
+                            .onChange(of: key) { _ in failure = nil }
+                        PasteButton(payloadType: String.self) { values in
+                            if let value = values.first { key = value.trimmingCharacters(in: .whitespacesAndNewlines); failure = nil }
+                        }.labelStyle(.titleAndIcon).disabled(verifying).accessibilityIdentifier("paste-provider-key")
+                    } header: { Text(model.t("الصق المفتاح مرة واحدة", "Paste your key once")) } footer: {
+                        Text(model.t("الرجوع من الموقع ما يعنيش إن الحساب مربوط. نتحقق من المفتاح قبل التفعيل.", "Returning from the website does not connect your account. We verify the key before activation."))
+                    }.listRowBackground(Palette.surface)
+                    Section { Button { connect() } label: { HStack { Text(model.t("تحقق واربط", "Verify & connect")); if verifying { Spacer(); ProgressView() } } }.disabled(verifying || !provider.accepts(key.trimmingCharacters(in: .whitespacesAndNewlines))).accessibilityIdentifier("verify-connect") }.listRowBackground(Palette.surface)
+                } else {
+                    Section { Button(model.t("عندي مفتاح، نكمّل الربط", "I have a key — continue")) { enteringKey = true }.frame(minHeight: 44).accessibilityIdentifier("have-provider-key") }.listRowBackground(Palette.surface)
                 }
-                Section { Button { connect() } label: { HStack { Text(model.t("تحقق واربط", "Verify & connect")); if verifying { Spacer(); ProgressView() } } }.disabled(verifying || !provider.accepts(key.trimmingCharacters(in: .whitespacesAndNewlines))).accessibilityIdentifier("verify-connect") }
                 if let failure { Section { Text(failure).foregroundStyle(.red) } }
                 Section { Text(model.t("المفتاح ينحفظ مرة واحدة. التحقق ما يرسلش تسجيل ولا أسماء.", "Your key is saved once. Verification sends no recording or contacts.")) }.foregroundStyle(.secondary)
             }.navigationTitle(model.t("ربط ", "Connect ") + provider.label).navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(model.t("إلغاء", "Cancel")) { task?.cancel(); dismiss() } } }
+                .scrollContentBackground(.hidden).background(Palette.background)
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(model.t("إلغاء", "Cancel")) { task?.cancel(); dismiss() }.accessibilityIdentifier("cancel-connection") } }
+                .sheet(isPresented: $showingAccount, onDismiss: { enteringKey = true }) { ProviderAccountBrowser(url: provider.keysURL).ignoresSafeArea() }
                 .onDisappear { task?.cancel(); key = "" }
         }
     }
@@ -139,4 +171,15 @@ struct ConnectionEditor: View {
             catch { guard !Task.isCancelled else { return }; failure = model.message(for: error); verifying = false }
         }
     }
+}
+
+/// The system browser owns login cookies and credentials; the app never reads the page.
+private struct ProviderAccountBrowser: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let controller = SFSafariViewController(url: url)
+        controller.dismissButtonStyle = .done
+        return controller
+    }
+    func updateUIViewController(_ controller: SFSafariViewController, context: Context) {}
 }

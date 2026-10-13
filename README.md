@@ -79,6 +79,8 @@ Open the assistant and tap the provider chip, or go to **Settings → AI connect
 
 Tap **Connect**, paste your key, and tap **Verify & connect**. The app verifies the key without sending a recording. After that, tap **Activate in one tap** to switch a previously connected provider. Only one is active; there is no automatic fallback to a different provider after an API failure. Availability, model permissions, and free-tier quotas are controlled by each provider. The basic key check does not guarantee access to every model. Groq users may need to enable the app's models in their [project limits](https://console.groq.com/settings/project/limits).
 
+On iOS, **Sign in or create account** opens the provider's official account/key page in the system browser inside the app. Create or sign in to your provider account there, copy a key, then return to paste and verify it. Existing key holders can skip directly to the key step. Returning from the browser alone never activates a connection.
+
 This is **bring your own API key**, not a universal “sign in with AI” service. Keys are encrypted using Android Keystore or saved in iOS Keychain, never bundled in release binaries, and never written to logs. A key in a personal mobile app is still less secure than a trusted backend; restrict and rotate keys at the provider when possible. Never post a key in an issue, screenshot, or commit.
 
 Audio and spoken text go to the **active** provider only. Contacts and saved reminders stay local. Manual entry and already-scheduled notifications do not use an AI service.

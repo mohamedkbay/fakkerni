@@ -50,4 +50,20 @@ final class FakkerniUITests: XCTestCase {
         XCTAssertTrue(light.buttons["type-instead"].waitForExistence(timeout: 10)); capture(light, "assistant-light")
         light.buttons["reminders"].tap(); capture(light, "reminders-light")
     }
+    func testProviderConnectionRequiresExplicitKeyVerification() throws {
+        let app = launch(["-skip-onboarding"])
+        app.buttons["ai-connections"].tap()
+        for provider in ["groq", "openAI", "gemini"] {
+            let connect = app.buttons["connect-" + provider]
+            XCTAssertTrue(connect.waitForExistence(timeout: 5)); connect.tap()
+            XCTAssertTrue(app.buttons["provider-account"].waitForExistence(timeout: 5))
+            if provider == "groq" { capture(app, "connect-account-dark") }
+            app.buttons["have-provider-key"].tap()
+            XCTAssertTrue(app.secureTextFields["api-key"].waitForExistence(timeout: 5))
+            XCTAssertFalse(app.buttons["verify-connect"].isEnabled)
+            if provider == "groq" { capture(app, "connect-key-dark") }
+            app.buttons["cancel-connection"].tap()
+            XCTAssertTrue(connect.waitForExistence(timeout: 5))
+        }
+    }
 }
