@@ -47,7 +47,7 @@ struct ContactPickerScreen: View {
                 } else if results.isEmpty { Text(model.t("ما لقيناش اسم أو رقم مطابق.", "No matching name or number.")) }
                 ForEach(results) { person in
                     Button { choose(person); dismiss() } label: {
-                        VStack(alignment: .leading, spacing: 4) { Text(person.name.isEmpty ? person.phone : person.name).foregroundStyle(.primary); Text(person.phone).font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(.secondary).environment(\.layoutDirection, .leftToRight) }.frame(minHeight: 48)
+                        VStack(alignment: .leading, spacing: 4) { Text(person.name.isEmpty ? person.phone : person.name).foregroundStyle(.primary); Text(person.phone).font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(Palette.secondary).environment(\.layoutDirection, .leftToRight) }.frame(minHeight: 48)
                     }
                 }
             }.searchable(text: $query, prompt: model.t("اسم عربي، English، أو رقم", "Arabic / English name or number"))
@@ -85,7 +85,7 @@ struct ReminderEditor: View {
         NavigationStack {
             Form {
                 if let draft, !draft.transcript.isEmpty {
-                    Section(model.t("كلامك", "Your words")) { Text(draft.transcript).textSelection(.enabled).foregroundStyle(.secondary) }
+                    Section(model.t("كلامك", "Your words")) { Text(draft.transcript).textSelection(.enabled).foregroundStyle(Palette.secondary) }
                     if draft.extractionFailed { Section { Text(model.t("كتبنا كلامك، لكن تحليل الموعد ما كملش. اختار التاريخ والساعة بيدك.", "Your words were transcribed, but the time could not be extracted. Choose the date and time below.")) } }
                     else if draft.needsReview { Section { Text(model.t("راجع التفاصيل، وكمّل أي موعد أو اسم ناقص.", "Review the details and fill in any missing time or person.")) } }
                 }
@@ -99,12 +99,12 @@ struct ReminderEditor: View {
                         DatePicker(model.t("اليوم", "Date"), selection: $eventTime, in: Date()..., displayedComponents: .date).environment(\.locale, Locale(identifier: "en_GB")).accessibilityIdentifier("event-date")
                         DatePicker(model.t("الساعة", "Time"), selection: $eventTime, displayedComponents: .hourAndMinute).environment(\.locale, Locale(identifier: "en_GB")).accessibilityIdentifier("event-time")
                         Text(eventTime.timeIntervalSinceNow > 3600 ? model.t("الإشعار يجيك قبل الموعد بساعة.", "You will be notified one hour before the event.") : model.t("الموعد قريب: الإشعار يجيك بعد الحفظ مباشرة.", "The event is soon: the notification arrives shortly after saving."))
-                            .font(.cairo(13, relativeTo: .caption)).foregroundStyle(.secondary)
+                            .font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary)
                     }
                 }.listRowBackground(Palette.surface)
                 Section(model.t("شخص نتصل به — اختياري", "Someone to call — optional")) {
                     Button { contacts = true } label: { HStack { MorphIcon(name: "phone").frame(width: 22, height: 22); Text(contactName.isEmpty ? model.t("نبحث في الأسماء والأرقام", "Search names and numbers") : contactName); Spacer(); Image(systemName: "chevron.forward").font(.caption) }.frame(minHeight: 44) }.accessibilityIdentifier("choose-contact")
-                    if matchCount > 1 && phone.isEmpty { Text(model.t("في أكثر من اسم مطابق. اختار الشخص الصحيح.", "More than one contact matches. Choose the right person.")).font(.cairo(13, relativeTo: .caption)).foregroundStyle(.secondary) }
+                    if matchCount > 1 && phone.isEmpty { Text(model.t("في أكثر من اسم مطابق. اختار الشخص الصحيح.", "More than one contact matches. Choose the right person.")).font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary) }
                     TextField(model.t("رقم الهاتف", "Phone number"), text: $phone).keyboardType(.phonePad).environment(\.layoutDirection, .leftToRight).accessibilityIdentifier("phone-number")
                         .onChange(of: phone) { phone = Digits.latin($0) }
                     if !contactName.isEmpty || !phone.isEmpty { Button(model.t("إزالة الشخص", "Remove person"), role: .destructive) { phone = ""; contactName = "" } }
@@ -154,17 +154,17 @@ struct ReminderListScreen: View {
         List {
             Picker(model.t("التذكيرات", "Reminders"), selection: $selected) { Text(model.t("القادمة", "Upcoming")).tag("upcoming"); Text(model.t("السابقة", "Past")).tag("past") }.pickerStyle(.segmented).listRowBackground(Color.clear)
             if entries.isEmpty {
-                VStack(spacing: 14) { MorphIcon(name: "bell").frame(width: 44, height: 44); Text(model.t("ما عندكش تذكيرات هنا.", "No reminders here yet.")); Text(model.t("قول شن عندك، أو اضغط + واكتبه.", "Say what you need to do, or tap + to type it.")).font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(.secondary) }.frame(maxWidth: .infinity).padding(.vertical, 36).listRowBackground(Color.clear)
+                VStack(spacing: 14) { MorphIcon(name: "bell").frame(width: 44, height: 44); Text(model.t("ما عندكش تذكيرات هنا.", "No reminders here yet.")); Text(model.t("قول شن عندك، أو اضغط + واكتبه.", "Say what you need to do, or tap + to type it.")).font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(Palette.secondary) }.frame(maxWidth: .infinity).padding(.vertical, 36).listRowBackground(Color.clear)
             }
             ForEach(entries) { reminder in
                 Button { editing = reminder } label: {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(alignment: .top, spacing: 12) {
                             MorphIcon(name: reminder.completed ? "check" : reminder.phone.isEmpty ? "clock" : "phone").frame(width: 24, height: 24).padding(10).background(Palette.background, in: Circle())
-                            VStack(alignment: .leading, spacing: 6) { Text(reminder.title).font(.cairo(18, relativeTo: .headline).weight(.semibold)).foregroundStyle(.primary); if !reminder.contactName.isEmpty { Text(reminder.contactName).font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(.secondary) } }
+                            VStack(alignment: .leading, spacing: 6) { Text(reminder.title).font(.cairo(18, relativeTo: .headline).weight(.semibold)).foregroundStyle(.primary); if !reminder.contactName.isEmpty { Text(reminder.contactName).font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(Palette.secondary) } }
                         }
                         Divider()
-                        HStack { Text(formatted(reminder.eventTime)); Spacer(); Text(reminder.completed ? model.t("تم", "Done") : model.t("قبلها بساعة", "1 hour before")) }.font(.cairo(12, relativeTo: .caption)).foregroundStyle(.secondary)
+                        HStack { Text(formatted(reminder.eventTime)); Spacer(); Text(reminder.completed ? model.t("تم", "Done") : model.t("قبلها بساعة", "1 hour before")) }.font(.cairo(12, relativeTo: .caption)).foregroundStyle(Palette.secondary)
                     }.padding(.vertical, 12)
                 }.listRowBackground(Palette.surface)
                     .swipeActions(edge: .trailing) { Button(role: .destructive) { model.delete(reminder) } label: { Label(model.t("حذف", "Delete"), systemImage: "trash") } }

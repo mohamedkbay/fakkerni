@@ -6,6 +6,8 @@ final class FakkerniUITests: XCTestCase {
         let app = XCUIApplication(); app.launchArguments = ["-ui-testing", "-reset-fixture", "-english"] + extra; app.launch(); return app
     }
     private func capture(_ app: XCUIApplication, _ name: String) {
+        // Navigation transitions can still be compositing after an element is hittable.
+        Thread.sleep(forTimeInterval: 0.8)
         let attachment = XCTAttachment(screenshot: app.screenshot()); attachment.name = name; attachment.lifetime = .keepAlways; add(attachment)
     }
     func testOnboardingAndApprovalGate() throws {

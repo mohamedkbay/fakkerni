@@ -15,17 +15,17 @@ struct SettingsScreen: View {
                 Picker("Language / اللغة", selection: $model.language) { Text("العربية").tag("ar"); Text("English").tag("en") }
             }.listRowBackground(Palette.surface)
             Section(model.t("الذكاء الاصطناعي", "Artificial intelligence")) {
-                NavigationLink { ConnectionsScreen() } label: { HStack { Text(model.t("ربط AI", "AI connections")); Spacer(); Text(model.activeProvider?.label ?? model.t("غير مربوط", "Not connected")).foregroundStyle(.secondary) } }.accessibilityIdentifier("settings-ai")
+                NavigationLink { ConnectionsScreen() } label: { HStack { Text(model.t("ربط AI", "AI connections")); Spacer(); Text(model.activeProvider?.label ?? model.t("غير مربوط", "Not connected")).foregroundStyle(Palette.secondary) } }.accessibilityIdentifier("settings-ai")
             }.listRowBackground(Palette.surface)
             Section {
-                NavigationLink { SoundPickerScreen() } label: { HStack { Text(model.t("نغمة التنبيه", "Alert sound")); Spacer(); Text(model.tone.label(model.ar)).foregroundStyle(.secondary) } }.accessibilityIdentifier("alert-sounds")
+                NavigationLink { SoundPickerScreen() } label: { HStack { Text(model.t("نغمة التنبيه", "Alert sound")); Spacer(); Text(model.tone.label(model.ar)).foregroundStyle(Palette.secondary) } }.accessibilityIdentifier("alert-sounds")
                 Button { test() } label: { HStack { MorphIcon(name: "bell").frame(width: 22, height: 22); Text(model.t("جرّب التنبيه بعد 10 ثواني", "Test alert in 10 seconds")); if testing { Spacer(); ProgressView() } }.frame(minHeight: 44) }.disabled(testing).accessibilityIdentifier("test-alert")
-                if let testMessage { Text(testMessage).font(.cairo(13, relativeTo: .caption)).foregroundStyle(.secondary) }
-                HStack { Text(model.t("الإشعارات", "Notifications")); Spacer(); Text(model.notificationsAllowed ? model.t("مفعّلة", "Enabled") : model.t("تحتاج إذن", "Permission needed")).foregroundStyle(.secondary) }
+                if let testMessage { Text(testMessage).font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary) }
+                HStack { Text(model.t("الإشعارات", "Notifications")); Spacer(); Text(model.notificationsAllowed ? model.t("مفعّلة", "Enabled") : model.t("تحتاج إذن", "Permission needed")).foregroundStyle(Palette.secondary) }
                 Button(model.t("إعدادات إشعارات الآيفون", "iPhone notification settings")) { UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!) }
             } header: { Text(model.t("التنبيهات", "Alerts")) } footer: { Text(model.t("اقفل الشاشة للتجربة. الصوت وشاشة القفل يتبعوا إعدادات الآيفون والصامت والتركيز.", "Lock the screen for the test. Sound and lock-screen display follow your iPhone notification, Silent Mode, and Focus settings.")) }
                 .listRowBackground(Palette.surface)
-            Section { Text("فكّرني · 1.6.0").frame(maxWidth: .infinity).foregroundStyle(.secondary).font(.cairo(13, relativeTo: .caption)) }.listRowBackground(Color.clear)
+            Section { Text("فكّرني · 1.6.0").frame(maxWidth: .infinity).foregroundStyle(Palette.secondary).font(.cairo(13, relativeTo: .caption)) }.listRowBackground(Color.clear)
         }.scrollContentBackground(.hidden).background(Palette.background)
             .navigationTitle(model.t("الإعدادات", "Settings")).task { await model.refreshNotificationStatus() }
     }
@@ -86,7 +86,7 @@ struct ConnectionsScreen: View {
         List {
             Section {
                 Text(model.t("اختار الخدمة، ادخل لحسابك أو افتح حساب جديد، واربطه مرة واحدة. خدمة واحدة فقط تكون مفعّلة.", "Choose a service, sign in or create an account, then connect it once. Only one service is active at a time."))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Palette.secondary)
             }.listRowBackground(Color.clear)
             ForEach(AIProvider.allCases) { provider in
                 Section(provider.label) {
@@ -98,7 +98,7 @@ struct ConnectionsScreen: View {
                     } else { Button(model.t("ربط ", "Connect ") + provider.label) { connecting = provider }.accessibilityIdentifier("connect-" + provider.rawValue) }
                 }.listRowBackground(Palette.surface)
             }
-            Section { Text(model.t("الأسماء والتذكيرات يبقوا على جهازك. المفاتيح محفوظة في Keychain. الكتابة اليدوية ما تحتاجش AI.", "Contacts and reminders stay on your device. Keys are saved in Keychain. Manual entry needs no AI.")) }.font(.cairo(13, relativeTo: .caption)).foregroundStyle(.secondary).listRowBackground(Color.clear)
+            Section { Text(model.t("الأسماء والتذكيرات يبقوا على جهازك. المفاتيح محفوظة في Keychain. الكتابة اليدوية ما تحتاجش AI.", "Contacts and reminders stay on your device. Keys are saved in Keychain. Manual entry needs no AI.")) }.font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary).listRowBackground(Color.clear)
         }.navigationTitle(model.t("ربط AI", "AI connections")).navigationBarTitleDisplayMode(.inline)
             .scrollContentBackground(.hidden).background(Palette.background)
             .sheet(item: $connecting) { provider in ConnectionEditor(provider: provider) }
@@ -126,11 +126,11 @@ struct ConnectionEditor: View {
                         BrandMark().frame(width: 32, height: 32).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 4) {
                             Text(provider.label).font(.cairo(24, relativeTo: .title2))
-                            Text(model.t(enteringKey ? "آخر خطوة للربط" : "مساعدك، بحسابك", enteringKey ? "One last step to connect" : "Your assistant, your account")).foregroundStyle(.secondary)
+                            Text(model.t(enteringKey ? "آخر خطوة للربط" : "مساعدك، بحسابك", enteringKey ? "One last step to connect" : "Your assistant, your account")).foregroundStyle(Palette.secondary)
                         }
                     }.padding(.vertical, 8)
                     Text(model.t("تسجيل الدخول يصير في موقع الخدمة الرسمي. بعده أنشئ مفتاح API وانسخه؛ كلمة مرورك تبقى عند الخدمة.", "Sign in on the provider’s official website, then create and copy an API key. Your password stays with the provider."))
-                        .font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(.secondary)
+                        .font(.cairo(14, relativeTo: .subheadline)).foregroundStyle(Palette.secondary)
                     Button { showingAccount = true } label: {
                         HStack {
                             Text(model.t("ادخل أو افتح حساب", "Sign in or create account"))
@@ -138,7 +138,7 @@ struct ConnectionEditor: View {
                             MorphIcon(name: "back").rotationEffect(.degrees(135)).frame(width: 22, height: 22).accessibilityHidden(true)
                         }.frame(minHeight: 44)
                     }.accessibilityIdentifier("provider-account").disabled(verifying)
-                    Text(provider.keysURL.host ?? "").font(.cairo(12, relativeTo: .caption)).foregroundStyle(.secondary).environment(\.layoutDirection, .leftToRight)
+                    Text(provider.keysURL.host ?? "").font(.cairo(12, relativeTo: .caption)).foregroundStyle(Palette.secondary).environment(\.layoutDirection, .leftToRight)
                 }.listRowBackground(Palette.surface)
                 if enteringKey {
                     Section {
@@ -155,7 +155,7 @@ struct ConnectionEditor: View {
                     Section { Button(model.t("عندي مفتاح، نكمّل الربط", "I have a key — continue")) { enteringKey = true }.frame(minHeight: 44).accessibilityIdentifier("have-provider-key") }.listRowBackground(Palette.surface)
                 }
                 if let failure { Section { Text(failure).foregroundStyle(.red) } }
-                Section { Text(model.t("المفتاح ينحفظ مرة واحدة. التحقق ما يرسلش تسجيل ولا أسماء.", "Your key is saved once. Verification sends no recording or contacts.")) }.foregroundStyle(.secondary)
+                Section { Text(model.t("المفتاح ينحفظ مرة واحدة. التحقق ما يرسلش تسجيل ولا أسماء.", "Your key is saved once. Verification sends no recording or contacts.")) }.foregroundStyle(Palette.secondary)
             }.navigationTitle(model.t("ربط ", "Connect ") + provider.label).navigationBarTitleDisplayMode(.inline)
                 .scrollContentBackground(.hidden).background(Palette.background)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(model.t("إلغاء", "Cancel")) { task?.cancel(); dismiss() }.accessibilityIdentifier("cancel-connection") } }

@@ -5,6 +5,7 @@ enum Palette {
     static let surface = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(red: 28/255, green: 32/255, blue: 33/255, alpha: 1) : .white })
     static let accent = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(red: 231/255, green: 236/255, blue: 233/255, alpha: 1) : UIColor(red: 32/255, green: 38/255, blue: 37/255, alpha: 1) })
     static let inverse = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? .black : .white })
+    static let secondary = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(red: 170/255, green: 177/255, blue: 173/255, alpha: 1) : UIColor(red: 93/255, green: 102/255, blue: 97/255, alpha: 1) })
 }
 
 private enum MotionPolicy {
