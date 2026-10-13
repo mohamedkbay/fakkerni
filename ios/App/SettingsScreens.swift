@@ -177,14 +177,25 @@ struct ConnectionEditor: View {
                     }
                 }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(model.t("إلغاء", "Cancel")) { task?.cancel(); dismiss() }.accessibilityIdentifier("cancel-connection") } }
-                // Safari owns its full-screen presentation. Stacking it as a third
-                // page sheet leaves its top toolbar with overlapping hit targets.
+                // Keep an app-owned return action outside Safari's toolbar so
+                // users can always continue, even while the provider page loads.
                 .fullScreenCover(isPresented: $showingAccount, onDismiss: { enteringKey = true }) {
-                    ProviderAccountBrowser(url: provider.keysURL, onClose: { showingAccount = false; enteringKey = true }).ignoresSafeArea()
+                    VStack(spacing: 0) {
+                        HStack {
+                            Text(provider.label).font(.cairo(16, relativeTo: .headline))
+                            Spacer()
+                            Button(model.t("الرجوع للربط", "Back to connection")) { closeAccount() }
+                                .font(.cairo(15, relativeTo: .body))
+                                .frame(minHeight: 48)
+                                .accessibilityIdentifier("return-from-provider")
+                        }.padding(.horizontal, 20).background(Palette.background)
+                        ProviderAccountBrowser(url: provider.keysURL, onClose: closeAccount)
+                    }.background(Palette.background)
                 }
             }
         }.onDisappear { if !showingAccount { task?.cancel(); key = "" } }
     }
+    private func closeAccount() { showingAccount = false; enteringKey = true }
     private func connect() {
         verifying = true; failure = nil
         let value = key.trimmingCharacters(in: .whitespacesAndNewlines)

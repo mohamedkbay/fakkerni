@@ -64,8 +64,11 @@ final class FakkerniUITests: XCTestCase {
             if provider == "groq" { capture(app, "connect-account-dark") }
             if provider == "groq" {
                 app.buttons["provider-account"].tap()
-                let browserDone = app.otherElements["TopBrowserBar"].buttons["Done"]
-                XCTAssertTrue(browserDone.waitForExistence(timeout: 10)); browserDone.tap()
+                let returnToApp = app.buttons["return-from-provider"]
+                XCTAssertTrue(returnToApp.waitForExistence(timeout: 10))
+                XCTAssertTrue(app.otherElements["TopBrowserBar"].waitForExistence(timeout: 10))
+                capture(app, "provider-browser-return")
+                returnToApp.tap()
                 let browserClosed = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: app.otherElements["TopBrowserBar"])
                 wait(for: [browserClosed], timeout: 10)
             } else { app.buttons["have-provider-key"].tap() }
