@@ -16,13 +16,13 @@ struct SettingsScreen: View {
             Section(model.t("الذكاء الاصطناعي", "Artificial intelligence")) {
                 NavigationLink { ConnectionsScreen() } label: { HStack { Text(model.t("ربط AI", "AI connections")); Spacer(); Text(model.activeProvider?.label ?? model.t("غير مربوط", "Not connected")).foregroundStyle(.secondary) } }.accessibilityIdentifier("settings-ai")
             }.listRowBackground(Palette.surface)
-            Section(model.t("التنبيهات", "Alerts")) {
+            Section {
                 NavigationLink { SoundPickerScreen() } label: { HStack { Text(model.t("نغمة التنبيه", "Alert sound")); Spacer(); Text(model.tone.label(model.ar)).foregroundStyle(.secondary) } }.accessibilityIdentifier("alert-sounds")
                 Button { test() } label: { HStack { MorphIcon(name: "bell").frame(width: 22, height: 22); Text(model.t("جرّب التنبيه بعد 10 ثواني", "Test alert in 10 seconds")); if testing { Spacer(); ProgressView() } }.frame(minHeight: 44) }.disabled(testing).accessibilityIdentifier("test-alert")
                 if let testMessage { Text(testMessage).font(.cairo(13, relativeTo: .caption)).foregroundStyle(.secondary) }
                 HStack { Text(model.t("الإشعارات", "Notifications")); Spacer(); Text(model.notificationsAllowed ? model.t("مفعّلة", "Enabled") : model.t("تحتاج إذن", "Permission needed")).foregroundStyle(.secondary) }
                 Button(model.t("إعدادات إشعارات الآيفون", "iPhone notification settings")) { UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!) }
-            } footer: { Text(model.t("اقفل الشاشة للتجربة. الصوت وشاشة القفل يتبعوا إعدادات الآيفون والصامت والتركيز.", "Lock the screen for the test. Sound and lock-screen display follow your iPhone notification, Silent Mode, and Focus settings.")) }
+            } header: { Text(model.t("التنبيهات", "Alerts")) } footer: { Text(model.t("اقفل الشاشة للتجربة. الصوت وشاشة القفل يتبعوا إعدادات الآيفون والصامت والتركيز.", "Lock the screen for the test. Sound and lock-screen display follow your iPhone notification, Silent Mode, and Focus settings.")) }
                 .listRowBackground(Palette.surface)
             Section { Text("فكّرني · 1.6.0").frame(maxWidth: .infinity).foregroundStyle(.secondary).font(.cairo(13, relativeTo: .caption)) }.listRowBackground(Color.clear)
         }.scrollContentBackground(.hidden).background(Palette.background)
