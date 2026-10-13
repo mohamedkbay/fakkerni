@@ -177,7 +177,9 @@ struct ConnectionEditor: View {
                     }
                 }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(model.t("إلغاء", "Cancel")) { task?.cancel(); dismiss() }.accessibilityIdentifier("cancel-connection") } }
-                .sheet(isPresented: $showingAccount, onDismiss: { enteringKey = true }) {
+                // Safari owns its full-screen presentation. Stacking it as a third
+                // page sheet leaves its top toolbar with overlapping hit targets.
+                .fullScreenCover(isPresented: $showingAccount, onDismiss: { enteringKey = true }) {
                     ProviderAccountBrowser(url: provider.keysURL, onClose: { showingAccount = false; enteringKey = true }).ignoresSafeArea()
                 }
             }

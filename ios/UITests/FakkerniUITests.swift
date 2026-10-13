@@ -66,6 +66,8 @@ final class FakkerniUITests: XCTestCase {
                 app.buttons["provider-account"].tap()
                 let browserDone = app.otherElements["TopBrowserBar"].buttons["Done"]
                 XCTAssertTrue(browserDone.waitForExistence(timeout: 10)); browserDone.tap()
+                let browserClosed = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: app.otherElements["TopBrowserBar"])
+                wait(for: [browserClosed], timeout: 10)
             } else { app.buttons["have-provider-key"].tap() }
             XCTAssertTrue(app.secureTextFields["api-key"].waitForExistence(timeout: 5))
             XCTAssertFalse(app.buttons["verify-connect"].isEnabled)
