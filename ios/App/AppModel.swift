@@ -75,7 +75,7 @@ enum KeychainStore {
         if testMode && ProcessInfo.processInfo.arguments.contains("-reset-fixture") { try? FileManager.default.removeItem(at: store.url) }
         #endif
         do { reminders = try store.load() }
-        catch { loadFailed = true; error = "تعذّر قراءة التذكيرات. لم نغيّر الملف. / Could not read reminders; the file was preserved." }
+        catch { loadFailed = true; self.error = "تعذّر قراءة التذكيرات. لم نغيّر الملف. / Could not read reminders; the file was preserved." }
         refreshConnections()
         #if DEBUG
         if testMode {
@@ -122,14 +122,14 @@ enum KeychainStore {
     func delete(_ reminder: Reminder) {
         let next = reminders.filter { $0.id != reminder.id }
         do { try store.save(next); reminders = next; notifications.cancel(reminder.id) }
-        catch { error = t("تعذّر حفظ التغيير. جرّب مرة ثانية.", "Could not save the change. Please try again.") }
+        catch { self.error = t("تعذّر حفظ التغيير. جرّب مرة ثانية.", "Could not save the change. Please try again.") }
     }
     func complete(_ reminder: Reminder) {
         var next = reminders
         guard let index = next.firstIndex(where: { $0.id == reminder.id }) else { return }
         next[index].completed = true
         do { try store.save(next); reminders = next; notifications.cancel(reminder.id) }
-        catch { error = t("تعذّر حفظ التغيير.", "Could not save the change.") }
+        catch { self.error = t("تعذّر حفظ التغيير.", "Could not save the change.") }
     }
     func changeTone(_ next: Tone) async throws {
         let previous = tone

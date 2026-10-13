@@ -87,7 +87,7 @@ struct AssistantScreen: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) { NavigationLink { ReminderListScreen() } label: { MorphIcon(name: "clock").frame(width: 24, height: 24).frame(width: 44, height: 44) }.accessibilityLabel(model.t("تذكيراتي", "My reminders")).accessibilityIdentifier("reminders") }
                 ToolbarItem(placement: .navigationBarTrailing) { NavigationLink { SettingsScreen() } label: { MorphIcon(name: "settings").frame(width: 24, height: 24).frame(width: 44, height: 44) }.accessibilityLabel(model.t("الإعدادات", "Settings")).accessibilityIdentifier("settings") }
-                ToolbarItem(placement: .principal) { Button { connections = true } label: { HStack(spacing: 6) { BrandMark().frame(width: 20, height: 20); Text(model.activeProvider?.label ?? model.t("ربط AI", "Connect AI")).font(.cairo(13, relativeTo: .caption)) }.padding(.horizontal, 12).padding(.vertical, 8).background(Palette.surface, in: Capsule()) }.accessibilityIdentifier("ai-connections") }
+                ToolbarItem(placement: .principal) { Button { connections = true } label: { HStack(spacing: 8) { BrandMark().frame(width: 24, height: 24); VStack(spacing: 0) { Text(model.name).font(.cairo(14, relativeTo: .subheadline)); Text(model.activeProvider?.label ?? model.t("ربط AI", "Connect AI")).font(.cairo(11, relativeTo: .caption2)).foregroundStyle(.secondary) } }.padding(.horizontal, 12).frame(minHeight: 44).background(Palette.surface, in: Capsule()) }.accessibilityIdentifier("ai-connections") }
             }
             .safeAreaInset(edge: .bottom) {
                 VStack(spacing: 12) {

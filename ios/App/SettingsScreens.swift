@@ -52,7 +52,7 @@ struct SoundPickerScreen: View {
                     }.disabled(changing).accessibilityIdentifier("tone-" + tone.rawValue)
                         .accessibilityAddTraits(tone == model.tone ? .isSelected : [])
                 }
-            } footer: { Text(model.t("اضغط على النغمة باش تسمعها وتختارها. نغمة الجهاز تستعمل الصوت الافتراضي؛ iOS ما يوفّرش قائمة نغمات الهاتف للتطبيقات.", "Tap a tone to preview and select it. System sound uses the default notification sound; iOS does not expose a phone ringtone browser to apps.")) }
+            } footer: { Text(model.t("اضغط على إحدى النغمات باش تسمعها وتختارها. نغمة الجهاز تستعمل الصوت الافتراضي، وتقدر تجربها بزر التنبيه بعد 10 ثواني.", "Tap a bundled tone to preview and select it. System sound uses the default notification sound; preview it with the 10-second alert test.")) }
             if let failure { Text(failure).foregroundStyle(.red) }
         }.navigationTitle(model.t("نغمة التنبيه", "Alert sound"))
             .scrollContentBackground(.hidden).background(Palette.background)
@@ -67,7 +67,7 @@ struct SoundPickerScreen: View {
                     try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
                     try AVAudioSession.sharedInstance().setActive(true)
                     player = try AVAudioPlayer(contentsOf: url); player?.play()
-                } else if tone == .system { AudioServicesPlaySystemSound(1007) }
+                }
             } catch { failure = model.message(for: error) }
             changing = false
         }

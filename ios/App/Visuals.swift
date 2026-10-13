@@ -12,9 +12,11 @@ extension Font {
 }
 
 struct PrimaryButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var enabled
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.font(.cairo().weight(.semibold)).frame(maxWidth: .infinity).frame(minHeight: 54)
             .foregroundStyle(Palette.inverse).background(Palette.accent.opacity(configuration.isPressed ? 0.75 : 1), in: Capsule())
+            .opacity(enabled ? 1 : 0.45)
     }
 }
 
