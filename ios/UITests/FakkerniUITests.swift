@@ -25,8 +25,9 @@ final class FakkerniUITests: XCTestCase {
         app.buttons["type-instead"].tap()
         let title = app.textFields["reminder-title"].exists ? app.textFields["reminder-title"] : app.textViews["reminder-title"]
         title.tap(); title.typeText("Call the client")
-        let eventSwitch = app.switches["has-event-time"]
-        eventSwitch.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
+        XCTAssertTrue(app.datePickers["event-date"].exists)
+        XCTAssertTrue(app.datePickers["event-time"].exists)
+        app.buttons["day-tomorrow"].tap()
         XCTAssertTrue(app.buttons["approve-reminder"].isEnabled)
         app.buttons["approve-reminder"].tap()
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")

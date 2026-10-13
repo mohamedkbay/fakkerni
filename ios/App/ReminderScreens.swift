@@ -94,14 +94,21 @@ struct ReminderEditor: View {
                         .onChange(of: title) { title = Digits.latin($0) }
                 }.listRowBackground(Palette.surface)
                 Section(model.t("إمتى؟", "When?")) {
-                    Toggle(model.t("حدّد الموعد", "Choose the event time"), isOn: $hasTime).accessibilityIdentifier("has-event-time")
-                    if hasTime {
-                        DatePicker(model.t("اليوم", "Date"), selection: $eventTime, in: Date()..., displayedComponents: .date).environment(\.locale, Locale(identifier: "en_GB")).accessibilityIdentifier("event-date")
-                        DatePicker(model.t("الساعة", "Time"), selection: $eventTime, displayedComponents: .hourAndMinute).environment(\.locale, Locale(identifier: "en_GB")).accessibilityIdentifier("event-time")
+                    HStack(spacing: 12) {
+                        Button(model.t("اليوم", "Today")) { chooseDay(0) }.accessibilityIdentifier("day-today")
+                        Button(model.t("غدوة", "Tomorrow")) { chooseDay(1) }.accessibilityIdentifier("day-tomorrow")
+                    }.buttonStyle(.bordered).controlSize(.large).frame(minHeight: 44)
+                    DatePicker(model.t("التاريخ", "Date"), selection: $eventTime, in: Calendar.current.startOfDay(for: Date())..., displayedComponents: .date).environment(\.locale, Locale(identifier: "en_GB")).accessibilityIdentifier("event-date")
+                    DatePicker(model.t("الساعة", "Time"), selection: $eventTime, displayedComponents: .hourAndMinute).environment(\.locale, Locale(identifier: "en_GB")).accessibilityIdentifier("event-time")
+                    if !hasTime {
+                        Text(model.t("اختار اليوم أو غدوة، أو غيّر التاريخ والساعة. الموعد الظاهر اقتراح فقط.", "Choose Today or Tomorrow, or change the date and time. The displayed time is only a suggestion.")).font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary)
+                    } else if eventTime <= Date() {
+                        Text(model.t("الوقت هذا فات. اختار ساعة جاية.", "That time has passed. Choose a future time.")).font(.cairo(13, relativeTo: .caption)).foregroundStyle(.red)
+                    } else {
                         Text(eventTime.timeIntervalSinceNow > 3600 ? model.t("الإشعار يجيك قبل الموعد بساعة.", "You will be notified one hour before the event.") : model.t("الموعد قريب: الإشعار يجيك بعد الحفظ مباشرة.", "The event is soon: the notification arrives shortly after saving."))
                             .font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary)
                     }
-                }.listRowBackground(Palette.surface)
+                }.listRowBackground(Palette.surface).onChange(of: eventTime) { _ in hasTime = true }
                 Section(model.t("شخص نتصل به — اختياري", "Someone to call — optional")) {
                     Button { contacts = true } label: { HStack { MorphIcon(name: "phone").frame(width: 22, height: 22); Text(contactName.isEmpty ? model.t("نبحث في الأسماء والأرقام", "Search names and numbers") : contactName); Spacer(); Image(systemName: "chevron.forward").font(.caption) }.frame(minHeight: 44) }.accessibilityIdentifier("choose-contact")
                     if matchCount > 1 && phone.isEmpty { Text(model.t("في أكثر من اسم مطابق. اختار الشخص الصحيح.", "More than one contact matches. Choose the right person.")).font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary) }
@@ -115,7 +122,7 @@ struct ReminderEditor: View {
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(model.t("إلغاء", "Cancel")) { dismiss() }.disabled(saving).accessibilityIdentifier("cancel-editor") } }
                 .safeAreaInset(edge: .bottom) {
                     Button { save() } label: { if saving { ProgressView().tint(Palette.inverse) } else { Text(model.t("موافق، احفظ التذكير", "Approve & save reminder")) } }
-                        .buttonStyle(PrimaryButtonStyle()).disabled(saving || !hasTime || title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .buttonStyle(PrimaryButtonStyle()).disabled(saving || !hasTime || eventTime <= Date() || title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         .accessibilityIdentifier("approve-reminder").padding(20).background(Palette.background)
                 }
                 .sheet(isPresented: $contacts) { ContactPickerScreen(query: contactName) { person in contactName = person.name; phone = person.phone } }
@@ -128,6 +135,13 @@ struct ReminderEditor: View {
                     if matches.count == 1 { phone = matches[0].phone; contactName = matches[0].name }
                 }
         }
+    }
+    private func chooseDay(_ offset: Int) {
+        let calendar = Calendar.current
+        let day = calendar.date(byAdding: .day, value: offset, to: Date()) ?? Date()
+        let time = calendar.dateComponents([.hour, .minute], from: eventTime)
+        eventTime = calendar.date(bySettingHour: time.hour ?? 12, minute: time.minute ?? 0, second: 0, of: day) ?? day
+        hasTime = true
     }
     private func save() {
         let cleanedPhone = PhoneNumber.clean(phone)
