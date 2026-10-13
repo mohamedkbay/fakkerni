@@ -23,3 +23,15 @@ captures/
 !.env.example
 *.log
 *.gesture-telemetry.json
+
+# iOS signing, local builds, and Xcode user state.
+ios/.build/
+ios/.swiftpm/
+ios/output/
+**/DerivedData/
+**/xcuserdata/
+*.xcuserstate
+*.xcresult/
+*.ipa
+*.mobileprovision
+*.cer
