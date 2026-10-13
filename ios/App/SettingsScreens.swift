@@ -82,6 +82,7 @@ struct ConnectionsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @State private var connecting: AIProvider?
     @State private var removing: AIProvider?
+    var presentedAsSheet = false
     var body: some View {
         List {
             Section {
@@ -101,7 +102,12 @@ struct ConnectionsScreen: View {
             Section { Text(model.t("الأسماء والتذكيرات يبقوا على جهازك. المفاتيح محفوظة في Keychain. الكتابة اليدوية ما تحتاجش AI.", "Contacts and reminders stay on your device. Keys are saved in Keychain. Manual entry needs no AI.")) }.font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary).listRowBackground(Color.clear)
         }.navigationTitle(model.t("ربط AI", "AI connections")).navigationBarTitleDisplayMode(.inline)
             .scrollContentBackground(.hidden).background(Palette.background)
-            .sheet(item: $connecting) { provider in ConnectionEditor(provider: provider) }
+            .toolbar {
+                if presentedAsSheet {
+                    ToolbarItem(placement: .confirmationAction) { Button(model.t("تم", "Done")) { dismiss() }.accessibilityIdentifier("close-connections") }
+                }
+            }
+            .sheet(item: $connecting) { provider in ConnectionEditor(provider: provider, onComplete: { dismiss() }) }
             .confirmationDialog(model.t("تفصل الربط؟", "Disconnect this provider?"), isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } }), titleVisibility: .visible) {
                 if let value = removing { Button(model.t("فصل", "Disconnect"), role: .destructive) { do { try model.disconnect(value) } catch { model.error = model.message(for: error) }; removing = nil } }
             }
@@ -112,14 +118,25 @@ struct ConnectionEditor: View {
     @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     let provider: AIProvider
+    var onComplete: () -> Void = {}
     @State private var key = ""
     @State private var verifying = false
     @State private var failure: String?
     @State private var task: Task<Void, Never>?
     @State private var enteringKey = false
     @State private var showingAccount = false
+    @State private var connected = false
     var body: some View {
         NavigationStack {
+            if connected {
+                VStack(spacing: 20) {
+                    MorphIcon(name: "check").frame(width: 56, height: 56)
+                    Text(model.t("تم ربط ", "Connected to ") + provider.label).font(.cairo(26, relativeTo: .title2))
+                    Text(model.t("حسابك جاهز. توا ارجع للمساعد وسجّل تذكيرك.", "Your account is ready. Return to your assistant and record a reminder.")).foregroundStyle(Palette.secondary).multilineTextAlignment(.center)
+                    Button(model.t("الرجوع للبرنامج", "Return to Fakkerni")) { dismiss(); onComplete() }.buttonStyle(PrimaryButtonStyle()).accessibilityIdentifier("finish-connection")
+                }.padding(24).frame(maxWidth: 520).frame(maxWidth: .infinity, maxHeight: .infinity).background(Palette.background)
+                    .interactiveDismissDisabled()
+            } else {
             Form {
                 Section {
                     HStack(spacing: 14) {
@@ -150,7 +167,6 @@ struct ConnectionEditor: View {
                     } header: { Text(model.t("الصق المفتاح مرة واحدة", "Paste your key once")) } footer: {
                         Text(model.t("الرجوع من الموقع ما يعنيش إن الحساب مربوط. نتحقق من المفتاح قبل التفعيل.", "Returning from the website does not connect your account. We verify the key before activation."))
                     }.listRowBackground(Palette.surface)
-                    Section { Button { connect() } label: { HStack { Text(model.t("تحقق واربط", "Verify & connect")); if verifying { Spacer(); ProgressView() } } }.disabled(verifying || !provider.accepts(key.trimmingCharacters(in: .whitespacesAndNewlines))).accessibilityIdentifier("verify-connect") }.listRowBackground(Palette.surface)
                 } else {
                     Section { Button(model.t("عندي مفتاح، نكمّل الربط", "I have a key — continue")) { enteringKey = true }.frame(minHeight: 44).accessibilityIdentifier("have-provider-key") }.listRowBackground(Palette.surface)
                 }
@@ -158,16 +174,24 @@ struct ConnectionEditor: View {
                 Section { Text(model.t("المفتاح ينحفظ مرة واحدة. التحقق ما يرسلش تسجيل ولا أسماء.", "Your key is saved once. Verification sends no recording or contacts.")) }.foregroundStyle(Palette.secondary)
             }.navigationTitle(model.t("ربط ", "Connect ") + provider.label).navigationBarTitleDisplayMode(.inline)
                 .scrollContentBackground(.hidden).background(Palette.background)
+                .safeAreaInset(edge: .bottom) {
+                    if enteringKey {
+                        Button { connect() } label: { HStack { Text(model.t("تحقق واربط", "Verify & connect")); if verifying { ProgressView().tint(Palette.inverse) } } }
+                            .buttonStyle(PrimaryButtonStyle()).disabled(verifying || !provider.accepts(key.trimmingCharacters(in: .whitespacesAndNewlines)))
+                            .accessibilityIdentifier("verify-connect").padding(20).background(Palette.background)
+                    }
+                }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(model.t("إلغاء", "Cancel")) { task?.cancel(); dismiss() }.accessibilityIdentifier("cancel-connection") } }
                 .sheet(isPresented: $showingAccount, onDismiss: { enteringKey = true }) { ProviderAccountBrowser(url: provider.keysURL).ignoresSafeArea() }
                 .onDisappear { task?.cancel(); key = "" }
+            }
         }
     }
     private func connect() {
         verifying = true; failure = nil
         let value = key.trimmingCharacters(in: .whitespacesAndNewlines)
         task = Task {
-            do { try await model.connect(provider, key: value); guard !Task.isCancelled else { return }; key = ""; dismiss() }
+            do { try await model.connect(provider, key: value); guard !Task.isCancelled else { return }; key = ""; connected = true; verifying = false; UINotificationFeedbackGenerator().notificationOccurred(.success) }
             catch { guard !Task.isCancelled else { return }; failure = model.message(for: error); verifying = false }
         }
     }

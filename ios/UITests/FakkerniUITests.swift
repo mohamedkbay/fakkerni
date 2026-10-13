@@ -60,12 +60,18 @@ final class FakkerniUITests: XCTestCase {
             XCTAssertTrue(connect.waitForExistence(timeout: 5)); connect.tap()
             XCTAssertTrue(app.buttons["provider-account"].waitForExistence(timeout: 5))
             if provider == "groq" { capture(app, "connect-account-dark") }
-            app.buttons["have-provider-key"].tap()
+            if provider == "groq" {
+                app.buttons["provider-account"].tap()
+                let browserDone = app.buttons["Done"]
+                XCTAssertTrue(browserDone.waitForExistence(timeout: 10)); browserDone.tap()
+            } else { app.buttons["have-provider-key"].tap() }
             XCTAssertTrue(app.secureTextFields["api-key"].waitForExistence(timeout: 5))
             XCTAssertFalse(app.buttons["verify-connect"].isEnabled)
             if provider == "groq" { capture(app, "connect-key-dark") }
             app.buttons["cancel-connection"].tap()
             XCTAssertTrue(connect.waitForExistence(timeout: 5))
         }
+        app.buttons["close-connections"].tap()
+        XCTAssertTrue(app.buttons["hold-to-speak"].waitForExistence(timeout: 5))
     }
 }

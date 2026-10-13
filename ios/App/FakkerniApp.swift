@@ -114,7 +114,7 @@ struct AssistantScreen: View {
             }
             .sheet(isPresented: $manual) { ReminderEditor() }
             .sheet(item: $voice.draft) { draft in ReminderEditor(draft: draft) }
-            .sheet(isPresented: $connections) { NavigationStack { ConnectionsScreen() }.presentationDragIndicator(.visible) }
+            .sheet(isPresented: $connections) { NavigationStack { ConnectionsScreen(presentedAsSheet: true) }.presentationDragIndicator(.visible) }
             .onChange(of: voice.needsConnection) { needed in if needed { connections = true; voice.needsConnection = false } }
             .onChange(of: scenePhase) { phase in if phase != .active { voice.cancel() } }
             .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { _ in voice.cancel(); voice.status = model.t("التسجيل توقف. اضغط باش تسجّل من جديد.", "Recording was interrupted. Hold to record again.") }
