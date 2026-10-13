@@ -38,7 +38,29 @@ Fakkerni is a native Android reminder app with a SwiftUI companion for iPhone an
 
 The app name remains **فكّرني** in both interface languages. The assistant name and theme can be changed in Settings.
 
-## Screens
+## Native iOS screens
+
+Real iPhone Simulator captures of the iOS companion, using synthetic reminders. The app supports both Arabic and English; these captures use English for the documentation.
+
+<table>
+<tr><th>Speak or type</th><th>Review before saving</th><th>Connect your AI</th></tr>
+<tr>
+<td><img src="docs/media/ios/assistant-dark.png" width="250" alt="Dark iOS assistant with silver orb and bottom recording controls" /></td>
+<td><img src="docs/media/ios/editor-dark.png" width="250" alt="Reminder review with Today, Tomorrow, date and time controls" /></td>
+<td><img src="docs/media/ios/connect-key-dark.png" width="250" alt="Explicit API-key verification after returning from provider sign-in" /></td>
+</tr>
+<tr><th>Light appearance</th><th>Your reminders</th><th>Nine alert sounds</th></tr>
+<tr>
+<td><img src="docs/media/ios/assistant-light.png" width="250" alt="Light iOS assistant" /></td>
+<td><img src="docs/media/ios/reminders-light.png" width="250" alt="Native iOS reminder list using synthetic data" /></td>
+<td><img src="docs/media/ios/sounds-dark.png" width="250" alt="In-app alert tone selection" /></td>
+</tr>
+</table>
+
+[View the screen-tour GIF](docs/media/ios/screen-tour.gif) — a slideshow of real Simulator screenshots, not a recording of the assistant animation. [iPad and large-text captures](docs/media/ios/).
+
+<details>
+<summary>Archived Android screens (v1.3)</summary>
 
 <table>
 <tr><th>Voice assistant</th><th>Review and edit</th><th>Reminders</th></tr>
@@ -50,6 +72,8 @@ The app name remains **فكّرني** in both interface languages. The assistant
 </table>
 
 [Watch the short GIF tour](docs/media/app-tour.gif). These are archived captures of the v1.3 interface, **not** screenshots of v1.5.1. No Android emulator image was available on the build machine for new device screenshots.
+
+</details>
 
 ## Install
 
@@ -79,7 +103,7 @@ Open the assistant and tap the provider chip, or go to **Settings → AI connect
 
 Tap **Connect**, paste your key, and tap **Verify & connect**. The app verifies the key without sending a recording. After that, tap **Activate in one tap** to switch a previously connected provider. Only one is active; there is no automatic fallback to a different provider after an API failure. Availability, model permissions, and free-tier quotas are controlled by each provider. The basic key check does not guarantee access to every model. Groq users may need to enable the app's models in their [project limits](https://console.groq.com/settings/project/limits).
 
-On iOS, **Sign in or create account** opens the provider's official account/key page in the system browser inside the app. Create or sign in to your provider account there, copy a key, then return to paste and verify it. Existing key holders can skip directly to the key step. Returning from the browser alone never activates a connection.
+On iOS, **Sign in or create account** opens the provider's official account/key page in the system browser inside the app. Create or sign in to your provider account there, copy a key, then tap **Back to connection** to paste and verify it. The return control stays outside the provider page and works while it loads. Existing key holders can skip directly to the key step. Returning from the browser alone never activates a connection.
 
 This is **bring your own API key**, not a universal “sign in with AI” service. Keys are encrypted using Android Keystore or saved in iOS Keychain, never bundled in release binaries, and never written to logs. A key in a personal mobile app is still less secure than a trusted backend; restrict and rotate keys at the provider when possible. Never post a key in an issue, screenshot, or commit.
 
@@ -109,6 +133,10 @@ The debug APK is at `app/build/outputs/apk/debug/app-debug.apk`. No API key is n
 Morphicons assets are prebuilt; regenerate them only if needed with `npm ci --ignore-scripts && npm run icons`.
 
 The iOS source is in [`ios/`](ios/README.md), including the checked-in Xcode project, a standalone tested Swift core, UI tests, and GitHub Actions for native Simulator/device builds.
+
+## Architecture map
+
+The repository includes an [Understand-Anything knowledge graph](.ua/knowledge-graph.json) covering the native Android and iOS apps, shared asset tooling, tests, build configuration, and documentation. Its guided tour follows capture → AI draft → local contact matching → approval → notification scheduling. See [coverage and limitations](docs/architecture-analysis.md). This is static source analysis, not proof of runtime behavior; the release notes record the actual build and test results.
 
 ## Credits and licensing
 

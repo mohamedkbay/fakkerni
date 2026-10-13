@@ -49,7 +49,7 @@ Keys live in **Keychain**, unlocked-device-only and not migratable to another de
 
 Account creation/sign-in happens on the provider's site through `SFSafariViewController`. Fakkerni cannot see the password, page content, or browser cookies. Returning from the site does not mark a service connected: an explicitly pasted, verified API key is required. This is a guided API-key connection, not OAuth or a ChatGPT/Gemini subscription login. Clipboard access occurs only through the system paste control or the field's Paste action.
 
-The browser's **Done** button returns directly to key entry. **Cancel** leaves the service disconnected and returns to the provider list; the list has its own visible **Done** button when opened from the assistant. After verification, **Return to Fakkerni** closes setup and returns to the screen where you opened it. Invalid or rejected keys remain editable, with an explanation rather than a silent failure.
+The app-owned **Back to connection** button above the browser returns directly to key entry, even while a provider page is loading. Safari's own **Done** action also has a dismissal callback. **Cancel** leaves the service disconnected and returns to the provider list; the list has its own visible **Done** button when opened from the assistant. After verification, **Return to Fakkerni** closes setup and returns to the screen where you opened it. Invalid or rejected keys remain editable, with an explanation rather than a silent failure.
 
 ## Build and verify
 
