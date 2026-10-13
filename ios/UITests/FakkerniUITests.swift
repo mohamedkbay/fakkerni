@@ -43,6 +43,7 @@ final class FakkerniUITests: XCTestCase {
         XCTAssertTrue(app.buttons["type-instead"].waitForExistence(timeout: 10)); capture(app, "assistant-dark")
         app.buttons["type-instead"].tap(); capture(app, "editor-dark"); app.buttons["cancel-editor"].tap()
         app.buttons["settings"].tap(); capture(app, "settings-dark")
+        XCTAssertFalse(app.buttons["test-alert"].exists)
         app.buttons["alert-sounds"].tap()
         app.buttons["tone-bright"].tap()
         XCTAssertTrue(app.buttons["tone-bright"].isSelected)

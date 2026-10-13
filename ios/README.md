@@ -30,9 +30,9 @@ A paid Apple Developer membership enables Ad Hoc distribution to registered devi
 
 Settings offers the nine owner-supplied sounds, converted to small IMA4 CAF files for iOS, plus **System sound**. Choosing a bundled sound previews it and updates pending reminders. iOS does not expose Android's phone-ringtone picker; System sound uses the system notification default.
 
-Use **Settings → Test alert in 10 seconds**, lock the screen, and verify sound and display on your real phone. The system delivers scheduled local notifications even while the app is not running, subject to permissions, notification previews, Silent Mode, Focus, and volume settings. This app does not request Critical Alerts or claim to bypass those settings. The lock-screen card uses iOS's native notification presentation.
+Approving a reminder schedules its alert automatically. There is no test button or demo data in the Release app. The system delivers scheduled local notifications even while the app is not running, subject to permissions, notification previews, Silent Mode, Focus, and volume settings. This app does not request Critical Alerts or claim to bypass those settings. The lock-screen card uses iOS's native notification presentation.
 
-The iOS companion permits up to **60 upcoming reminders** so it stays within the system's finite pending-notification capacity and leaves room for the test alert. Completion/deletion cancels pending notifications. A stored alert time is not regenerated at every launch, preventing already-delivered reminders from sounding again. Notifications, microphone capture, contacts permissions, and audio must also be checked on actual hardware.
+The iOS companion permits up to **60 upcoming reminders** so it stays within the system's finite pending-notification capacity. Completion/deletion cancels pending notifications. A stored alert time is not regenerated at every launch, preventing already-delivered reminders from sounding again. Notifications, microphone capture, contacts permissions, and audio must also be checked on actual hardware.
 
 ## AI and privacy
 
@@ -47,6 +47,8 @@ The app sends only the recording/transcript and current time/time zone to the se
 Keys live in **Keychain**, unlocked-device-only and not migratable to another device. The source and binaries contain no keys. Temporary recordings are deleted after reading or cancellation; recording/processing is cancelled when the app leaves the foreground or audio is interrupted. There is no Android/iOS reminder sync or automatic key transfer. The iOS app has its own local JSON store.
 
 Account creation/sign-in happens on the provider's site through `SFSafariViewController`. Fakkerni cannot see the password, page content, or browser cookies. Returning from the site does not mark a service connected: an explicitly pasted, verified API key is required. This is a guided API-key connection, not OAuth or a ChatGPT/Gemini subscription login. Clipboard access occurs only through the system paste control or the field's Paste action.
+
+The browser's **Done** button returns directly to key entry. **Cancel** leaves the service disconnected and returns to the provider list; the list has its own visible **Done** button when opened from the assistant. After verification, **Return to Fakkerni** closes setup and returns to the screen where you opened it. Invalid or rejected keys remain editable, with an explanation rather than a silent failure.
 
 ## Build and verify
 

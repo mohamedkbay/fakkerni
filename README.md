@@ -31,7 +31,7 @@ Fakkerni is a native Android reminder app with a SwiftUI companion for iPhone an
 
 - **Voice to reminder:** Transcribes Arabic speech, proposes an Arabic task title and local date/time, then waits for your approval. Nothing is scheduled directly from AI output.
 - **One active AI:** Connect Groq, OpenAI, or Gemini on a dedicated page. Store more than one key, but activate only one provider at a time. A connected provider switches with one tap.
-- **Simple sound choice:** Pick one of nine compact, user-supplied sounds with an in-app preview. Android also offers its phone-tone picker; iOS offers the system default sound. Both have a 10-second notification test.
+- **Simple sound choice:** Pick one of nine compact, user-supplied sounds with an in-app preview. Android also offers its phone-tone picker; iOS offers the system default sound. iOS alerts schedule automatically when you approve a reminder, with no test button in the app.
 - **Local contacts:** Search Arabic or English names and phone numbers. When speech mentions a contact, the app matches it locally; it never uploads the address book. The call action opens the dialer, not an automatic call.
 - **Local alerts:** Android uses exact alarm-clock scheduling and its lock-screen card. iOS uses system-scheduled local notifications and the native notification card. Permissions, sound, and Focus/DND settings apply.
 - **Calm interface:** Dark and light modes, Cairo typeface, English digits `0–9` throughout, and locally rendered Morphicons animations.

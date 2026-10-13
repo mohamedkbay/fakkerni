@@ -34,14 +34,6 @@ final class NotificationScheduler {
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, reminder.alertTime.timeIntervalSinceNow), repeats: false)
         try await center.add(UNNotificationRequest(identifier: reminder.id.uuidString, content: content, trigger: trigger))
     }
-    func test(tone: Tone, ar: Bool) async throws {
-        guard try await center.requestAuthorization(options: [.alert, .sound, .badge]) else { throw AppError.permission }
-        let content = UNMutableNotificationContent()
-        content.title = ar ? "فكّرني — تجربة التنبيه" : "Fakkerni — alert test"
-        content.body = ar ? "التنبيه وصل. هكي بيظهر تذكيرك على شاشة القفل." : "The alert arrived. This is how your reminder appears on the lock screen."
-        content.sound = tone.filename.map { UNNotificationSound(named: UNNotificationSoundName($0)) } ?? .default
-        try await center.add(UNNotificationRequest(identifier: "fakkerni-test", content: content, trigger: UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)))
-    }
     func cancel(_ id: UUID) { center.removePendingNotificationRequests(withIdentifiers: [id.uuidString]); center.removeDeliveredNotifications(withIdentifiers: [id.uuidString]) }
 }
 

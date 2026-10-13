@@ -5,8 +5,6 @@ import FakkerniCore
 
 struct SettingsScreen: View {
     @EnvironmentObject private var model: AppModel
-    @State private var testing = false
-    @State private var testMessage: String?
     var body: some View {
         Form {
             Section(model.t("مساعدك", "Your assistant")) {
@@ -19,23 +17,13 @@ struct SettingsScreen: View {
             }.listRowBackground(Palette.surface)
             Section {
                 NavigationLink { SoundPickerScreen() } label: { HStack { Text(model.t("نغمة التنبيه", "Alert sound")); Spacer(); Text(model.tone.label(model.ar)).foregroundStyle(Palette.secondary) } }.accessibilityIdentifier("alert-sounds")
-                Button { test() } label: { HStack { MorphIcon(name: "bell").frame(width: 22, height: 22); Text(model.t("جرّب التنبيه بعد 10 ثواني", "Test alert in 10 seconds")); if testing { Spacer(); ProgressView() } }.frame(minHeight: 44) }.disabled(testing).accessibilityIdentifier("test-alert")
-                if let testMessage { Text(testMessage).font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary) }
                 HStack { Text(model.t("الإشعارات", "Notifications")); Spacer(); Text(model.notificationsAllowed ? model.t("مفعّلة", "Enabled") : model.t("تحتاج إذن", "Permission needed")).foregroundStyle(Palette.secondary) }
                 Button(model.t("إعدادات إشعارات الآيفون", "iPhone notification settings")) { UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!) }
-            } header: { Text(model.t("التنبيهات", "Alerts")) } footer: { Text(model.t("اقفل الشاشة للتجربة. الصوت وشاشة القفل يتبعوا إعدادات الآيفون والصامت والتركيز.", "Lock the screen for the test. Sound and lock-screen display follow your iPhone notification, Silent Mode, and Focus settings.")) }
+            } header: { Text(model.t("التنبيهات", "Alerts")) } footer: { Text(model.t("التنبيهات تتجهّز تلقائياً لما تحفظ التذكير. الصوت وشاشة القفل يتبعوا إعدادات الآيفون والصامت والتركيز.", "Alerts are scheduled automatically when you save a reminder. Sound and lock-screen display follow your iPhone notification, Silent Mode, and Focus settings.")) }
                 .listRowBackground(Palette.surface)
             Section { Text("فكّرني · 1.6.0").frame(maxWidth: .infinity).foregroundStyle(Palette.secondary).font(.cairo(13, relativeTo: .caption)) }.listRowBackground(Color.clear)
         }.scrollContentBackground(.hidden).background(Palette.background)
             .navigationTitle(model.t("الإعدادات", "Settings")).task { await model.refreshNotificationStatus() }
-    }
-    private func test() {
-        testing = true; testMessage = nil
-        Task {
-            do { try await model.notifications.test(tone: model.tone, ar: model.ar); testMessage = model.t("تجهّز. اقفل الشاشة توا، واستنّى 10 ثواني.", "Ready. Lock your screen now and wait 10 seconds."); await model.refreshNotificationStatus() }
-            catch { testMessage = model.message(for: error) }
-            testing = false
-        }
     }
 }
 
@@ -54,7 +42,7 @@ struct SoundPickerScreen: View {
                     }.disabled(changing).accessibilityIdentifier("tone-" + tone.rawValue)
                         .accessibilityAddTraits(tone == model.tone ? .isSelected : [])
                 }
-            } footer: { Text(model.t("اضغط على إحدى النغمات باش تسمعها وتختارها. نغمة الجهاز تستعمل الصوت الافتراضي، وتقدر تجربها بزر التنبيه بعد 10 ثواني.", "Tap a bundled tone to preview and select it. System sound uses the default notification sound; preview it with the 10-second alert test.")) }
+            } footer: { Text(model.t("اضغط على إحدى النغمات باش تسمعها وتختارها. نغمة الجهاز تستعمل صوت الإشعارات الافتراضي.", "Tap a bundled tone to preview and select it. System sound uses the default notification sound.")) }
             if let failure { Text(failure).foregroundStyle(.red) }
         }.navigationTitle(model.t("نغمة التنبيه", "Alert sound"))
             .scrollContentBackground(.hidden).background(Palette.background)
