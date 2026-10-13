@@ -35,3 +35,9 @@ ios/output/
 *.ipa
 *.mobileprovision
 *.cer
+
+# Understand-Anything local analysis scratch (published graphs remain trackable).
+.ua/intermediate/
+.ua/tmp/
+.ua/.trash-*/
+.ua/diff-overlay.json
