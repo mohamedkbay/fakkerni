@@ -167,6 +167,10 @@ struct ConnectionEditor: View {
                         PasteButton(payloadType: String.self) { values in
                             if let value = values.first { key = value.trimmingCharacters(in: .whitespacesAndNewlines); failure = nil }
                         }.labelStyle(.titleAndIcon).disabled(verifying).accessibilityIdentifier("paste-provider-key")
+                        if !key.isEmpty && !provider.accepts(key.trimmingCharacters(in: .whitespacesAndNewlines)) {
+                            Text(model.t("الصق مفتاح API كامل من صفحة ", "Paste a complete API key from ") + provider.label + model.t("، مش كلمة مرور الحساب.", ", not your account password."))
+                                .font(.cairo(13, relativeTo: .caption)).foregroundStyle(Palette.secondary).accessibilityIdentifier("key-format-help")
+                        }
                     } header: { Text(model.t("الصق المفتاح مرة واحدة", "Paste your key once")) } footer: {
                         Text(model.t("الرجوع من الموقع ما يعنيش إن الحساب مربوط. نتحقق من المفتاح قبل التفعيل.", "Returning from the website does not connect your account. We verify the key before activation."))
                     }.listRowBackground(Palette.surface)
@@ -185,10 +189,11 @@ struct ConnectionEditor: View {
                     }
                 }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(model.t("إلغاء", "Cancel")) { task?.cancel(); dismiss() }.accessibilityIdentifier("cancel-connection") } }
-                .sheet(isPresented: $showingAccount, onDismiss: { enteringKey = true }) { ProviderAccountBrowser(url: provider.keysURL).ignoresSafeArea() }
-                .onDisappear { task?.cancel(); key = "" }
+                .sheet(isPresented: $showingAccount, onDismiss: { enteringKey = true }) {
+                    ProviderAccountBrowser(url: provider.keysURL, onClose: { showingAccount = false; enteringKey = true }).ignoresSafeArea()
+                }
             }
-        }
+        }.onDisappear { if !showingAccount { task?.cancel(); key = "" } }
     }
     private func connect() {
         verifying = true; failure = nil
@@ -203,10 +208,18 @@ struct ConnectionEditor: View {
 /// The system browser owns login cookies and credentials; the app never reads the page.
 private struct ProviderAccountBrowser: UIViewControllerRepresentable {
     let url: URL
+    var onClose: () -> Void
+    func makeCoordinator() -> Coordinator { Coordinator(onClose: onClose) }
     func makeUIViewController(context: Context) -> SFSafariViewController {
         let controller = SFSafariViewController(url: url)
         controller.dismissButtonStyle = .done
+        controller.delegate = context.coordinator
         return controller
     }
     func updateUIViewController(_ controller: SFSafariViewController, context: Context) {}
+    final class Coordinator: NSObject, SFSafariViewControllerDelegate {
+        let onClose: () -> Void
+        init(onClose: @escaping () -> Void) { self.onClose = onClose }
+        func safariViewControllerDidFinish(_ controller: SFSafariViewController) { onClose() }
+    }
 }
