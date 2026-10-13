@@ -43,6 +43,7 @@ struct SoundPickerScreen: View {
     @State private var player: AVAudioPlayer?
     @State private var changing = false
     @State private var failure: String?
+    @State private var selectionTask: Task<Void, Never>?
     var body: some View {
         List {
             Section {
@@ -56,13 +57,14 @@ struct SoundPickerScreen: View {
             if let failure { Text(failure).foregroundStyle(.red) }
         }.navigationTitle(model.t("نغمة التنبيه", "Alert sound"))
             .scrollContentBackground(.hidden).background(Palette.background)
-            .onDisappear { player?.stop(); player = nil; try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation) }
+            .onDisappear { selectionTask?.cancel(); player?.stop(); player = nil; try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation) }
     }
     private func choose(_ tone: Tone) {
         changing = true; failure = nil; player?.stop()
-        Task {
+        selectionTask = Task {
             do {
                 try await model.changeTone(tone)
+                guard !Task.isCancelled else { return }
                 if let filename = tone.filename, let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".caf", with: ""), withExtension: "caf") {
                     try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
                     try AVAudioSession.sharedInstance().setActive(true)

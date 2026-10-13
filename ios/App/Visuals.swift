@@ -65,8 +65,9 @@ struct MorphIcon: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var previous = ""
     @State private var changed = Date.distantPast
+    @State private var transitionActive = false
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1/30, paused: reduceMotion || MotionPolicy.isUITest || (!spinning && Date().timeIntervalSince(changed) > 0.7))) { timeline in
+        TimelineView(.animation(minimumInterval: 1/30, paused: reduceMotion || MotionPolicy.isUITest || (!spinning && !transitionActive))) { timeline in
             Canvas { context, size in
                 let frames = IconCatalog.shared.transitions[previous + "_" + name]
                 let elapsed = timeline.date.timeIntervalSince(changed)
@@ -83,8 +84,12 @@ struct MorphIcon: View {
                 context.stroke(path, with: .foreground, style: StrokeStyle(lineWidth: 1.7*scale, lineCap: .round, lineJoin: .round))
             }.rotationEffect(.degrees(spinning && !reduceMotion && !MotionPolicy.isUITest ? timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 1.2)/1.2*360 : 0))
         }
-        .onChange(of: name) { old in previous = currentName; currentName = old; changed = Date() }
+        .onChange(of: name) { next in previous = currentName; currentName = next; changed = Date(); transitionActive = true }
         .onAppear { currentName = name }
+        .task(id: name) {
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            if !Task.isCancelled { transitionActive = false }
+        }
         .accessibilityHidden(true)
     }
     @State private var currentName = ""

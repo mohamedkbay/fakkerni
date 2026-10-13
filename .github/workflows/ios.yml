@@ -1,7 +1,7 @@
 name: iOS build and tests
 on:
   push:
-    branches: [main, codex/ios-support]
+    branches: [main]
     paths: ["ios/**", ".github/workflows/ios.yml"]
   pull_request:
     paths: ["ios/**", ".github/workflows/ios.yml"]

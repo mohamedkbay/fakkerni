@@ -18,15 +18,19 @@ final class FakkerniUITests: XCTestCase {
         app.buttons["cancel-editor"].tap(); app.buttons["reminders"].tap()
         XCTAssertFalse(app.staticTexts["Review the proposal"].exists)
     }
-    func testSaveManualReminderAndAlertTest() throws {
+    func testSaveManualReminderAndPersistence() throws {
         let app = launch(["-skip-onboarding"])
         app.buttons["type-instead"].tap()
         let title = app.textFields["reminder-title"].exists ? app.textFields["reminder-title"] : app.textViews["reminder-title"]
         title.tap(); title.typeText("Call the client")
-        app.switches["has-event-time"].tap()
+        let eventSwitch = app.switches["has-event-time"]
+        eventSwitch.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
+        XCTAssertTrue(app.buttons["approve-reminder"].isEnabled)
         app.buttons["approve-reminder"].tap()
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         if springboard.alerts.buttons["Allow"].waitForExistence(timeout: 5) { springboard.alerts.buttons["Allow"].tap() }
+        let editorDismissed = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: app.buttons["approve-reminder"])
+        wait(for: [editorDismissed], timeout: 10)
         XCTAssertTrue(app.buttons["reminders"].waitForExistence(timeout: 10))
         app.terminate(); app.launchArguments.removeAll { $0 == "-reset-fixture" }; app.launch()
         XCTAssertTrue(app.buttons["reminders"].waitForExistence(timeout: 10)); app.buttons["reminders"].tap()
