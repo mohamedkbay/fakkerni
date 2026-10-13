@@ -82,6 +82,7 @@ struct ConnectionsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @State private var connecting: AIProvider?
     @State private var removing: AIProvider?
+    @State private var returnAfterConnection = false
     var presentedAsSheet = false
     var body: some View {
         List {
@@ -107,7 +108,9 @@ struct ConnectionsScreen: View {
                     ToolbarItem(placement: .confirmationAction) { Button(model.t("تم", "Done")) { dismiss() }.accessibilityIdentifier("close-connections") }
                 }
             }
-            .sheet(item: $connecting) { provider in ConnectionEditor(provider: provider, onComplete: { dismiss() }) }
+            .sheet(item: $connecting, onDismiss: {
+                if returnAfterConnection { returnAfterConnection = false; dismiss() }
+            }) { provider in ConnectionEditor(provider: provider, onComplete: { returnAfterConnection = true; connecting = nil }) }
             .confirmationDialog(model.t("تفصل الربط؟", "Disconnect this provider?"), isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } }), titleVisibility: .visible) {
                 if let value = removing { Button(model.t("فصل", "Disconnect"), role: .destructive) { do { try model.disconnect(value) } catch { model.error = model.message(for: error) }; removing = nil } }
             }
@@ -133,7 +136,7 @@ struct ConnectionEditor: View {
                     MorphIcon(name: "check").frame(width: 56, height: 56)
                     Text(model.t("تم ربط ", "Connected to ") + provider.label).font(.cairo(26, relativeTo: .title2))
                     Text(model.t("حسابك جاهز. توا ارجع للمساعد وسجّل تذكيرك.", "Your account is ready. Return to your assistant and record a reminder.")).foregroundStyle(Palette.secondary).multilineTextAlignment(.center)
-                    Button(model.t("الرجوع للبرنامج", "Return to Fakkerni")) { dismiss(); onComplete() }.buttonStyle(PrimaryButtonStyle()).accessibilityIdentifier("finish-connection")
+                    Button(model.t("الرجوع للبرنامج", "Return to Fakkerni")) { onComplete() }.buttonStyle(PrimaryButtonStyle()).accessibilityIdentifier("finish-connection")
                 }.padding(24).frame(maxWidth: 520).frame(maxWidth: .infinity, maxHeight: .infinity).background(Palette.background)
                     .interactiveDismissDisabled()
             } else {
