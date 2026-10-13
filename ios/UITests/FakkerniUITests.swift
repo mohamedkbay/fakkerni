@@ -62,7 +62,7 @@ final class FakkerniUITests: XCTestCase {
             if provider == "groq" { capture(app, "connect-account-dark") }
             if provider == "groq" {
                 app.buttons["provider-account"].tap()
-                let browserDone = app.buttons["Done"]
+                let browserDone = app.otherElements["TopBrowserBar"].buttons["Done"]
                 XCTAssertTrue(browserDone.waitForExistence(timeout: 10)); browserDone.tap()
             } else { app.buttons["have-provider-key"].tap() }
             XCTAssertTrue(app.secureTextFields["api-key"].waitForExistence(timeout: 5))
