@@ -68,7 +68,7 @@ swiftc ios/Sources/FakkerniCore/*.swift ios/Scripts/CoreCheck.swift -o /tmp/fakk
 /tmp/fakkerni-core-check
 ```
 
-The full XCTest/Simulator build requires Xcode. Debug-only UI-test fixtures use a separate store and sample reminders; they are excluded from release behavior. CI screenshots use clearly synthetic reminder data, not a user's contacts or API keys.
+The full XCTest/Simulator build requires Xcode. Debug-only UI-test fixtures use a separate store, sample reminders, and paused animation for deterministic captures; they are excluded from release behavior. CI screenshots use clearly synthetic reminder data, not a user's contacts or API keys.
 
 ## Assets
 

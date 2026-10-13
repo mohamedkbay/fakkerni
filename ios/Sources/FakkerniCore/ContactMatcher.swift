@@ -4,7 +4,7 @@ public struct ContactPerson: Identifiable, Equatable, Sendable {
     public let id: String
     public let name: String
     public let phone: String
-    public init(id: String, name: String, phone: String) { self.id = id; self.name = name; self.phone = PhoneNumber.clean(phone) }
+    public init(id: String, name: String, phone: String) { self.id = id; self.name = Digits.latin(name); self.phone = PhoneNumber.clean(phone) }
 }
 
 public enum ContactMatcher {

@@ -7,6 +7,16 @@ enum Palette {
     static let inverse = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? .black : .white })
 }
 
+private enum MotionPolicy {
+    static var isUITest: Bool {
+        #if DEBUG
+        return ProcessInfo.processInfo.arguments.contains("-ui-testing")
+        #else
+        return false
+        #endif
+    }
+}
+
 extension Font {
     static func cairo(_ size: CGFloat = 17, relativeTo style: Font.TextStyle = .body) -> Font { .custom("Cairo-Regular", size: size, relativeTo: style) }
 }
@@ -56,12 +66,12 @@ struct MorphIcon: View {
     @State private var previous = ""
     @State private var changed = Date.distantPast
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1/30, paused: reduceMotion || (!spinning && Date().timeIntervalSince(changed) > 0.7))) { timeline in
+        TimelineView(.animation(minimumInterval: 1/30, paused: reduceMotion || MotionPolicy.isUITest || (!spinning && Date().timeIntervalSince(changed) > 0.7))) { timeline in
             Canvas { context, size in
                 let frames = IconCatalog.shared.transitions[previous + "_" + name]
                 let elapsed = timeline.date.timeIntervalSince(changed)
                 let index = Int(max(0, elapsed) * 60)
-                let parts = (!reduceMotion && frames != nil && index < frames!.count) ? frames![index] : IconCatalog.shared.shapes[name] ?? []
+                let parts = (!reduceMotion && !MotionPolicy.isUITest && frames != nil && index < frames!.count) ? frames![index] : IconCatalog.shared.shapes[name] ?? []
                 let scale = min(size.width, size.height) / 24
                 var path = Path()
                 for part in parts {
@@ -71,7 +81,7 @@ struct MorphIcon: View {
                     if part.closed { path.closeSubpath() }
                 }
                 context.stroke(path, with: .foreground, style: StrokeStyle(lineWidth: 1.7*scale, lineCap: .round, lineJoin: .round))
-            }.rotationEffect(.degrees(spinning && !reduceMotion ? timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 1.2)/1.2*360 : 0))
+            }.rotationEffect(.degrees(spinning && !reduceMotion && !MotionPolicy.isUITest ? timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 1.2)/1.2*360 : 0))
         }
         .onChange(of: name) { old in previous = currentName; currentName = old; changed = Date() }
         .onAppear { currentName = name }
@@ -88,9 +98,9 @@ struct AssistantOrb: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1/30, paused: reduceMotion || scenePhase != .active)) { timeline in
+        TimelineView(.animation(minimumInterval: 1/30, paused: reduceMotion || MotionPolicy.isUITest || scenePhase != .active)) { timeline in
             Canvas { context, size in
-                let phase = reduceMotion ? 0 : timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 11)/11 * Double.pi*2
+                let phase = reduceMotion || MotionPolicy.isUITest ? 0 : timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 11)/11 * Double.pi*2
                 let radius = min(size.width, size.height) * (recording ? 0.375 + amplitude*0.018 : 0.365)
                 let spin = phase * (processing ? 2.3 : 1)
                 let color = scheme == .dark ? Color(red: 0.90, green: 0.95, blue: 0.93) : Color(red: 0.15, green: 0.21, blue: 0.19)

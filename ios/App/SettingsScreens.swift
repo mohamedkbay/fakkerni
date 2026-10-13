@@ -9,7 +9,7 @@ struct SettingsScreen: View {
     var body: some View {
         Form {
             Section(model.t("مساعدك", "Your assistant")) {
-                TextField(model.t("اسم المساعد", "Assistant name"), text: $model.name).onChange(of: model.name) { value in if value.count > 40 { model.name = String(value.prefix(40)) } }
+                TextField(model.t("اسم المساعد", "Assistant name"), text: $model.name).onChange(of: model.name) { model.name = String(Digits.latin($0).prefix(40)) }
                 Picker(model.t("المظهر", "Appearance"), selection: $model.theme) { Text(model.t("داكن", "Dark")).tag("dark"); Text(model.t("فاتح", "Light")).tag("light") }
                 Picker("Language / اللغة", selection: $model.language) { Text("العربية").tag("ar"); Text("English").tag("en") }
             }.listRowBackground(Palette.surface)

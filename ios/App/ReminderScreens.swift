@@ -91,6 +91,7 @@ struct ReminderEditor: View {
                 }
                 Section(model.t("شن عندك؟", "What do you need to do?")) {
                     TextField(model.t("اكتب التذكير", "Write your reminder"), text: $title, axis: .vertical).lineLimit(2...5).accessibilityIdentifier("reminder-title")
+                        .onChange(of: title) { title = Digits.latin($0) }
                 }.listRowBackground(Palette.surface)
                 Section(model.t("إمتى؟", "When?")) {
                     Toggle(model.t("حدّد الموعد", "Choose the event time"), isOn: $hasTime).accessibilityIdentifier("has-event-time")
@@ -105,6 +106,7 @@ struct ReminderEditor: View {
                     Button { contacts = true } label: { HStack { MorphIcon(name: "phone").frame(width: 22, height: 22); Text(contactName.isEmpty ? model.t("نبحث في الأسماء والأرقام", "Search names and numbers") : contactName); Spacer(); Image(systemName: "chevron.forward").font(.caption) }.frame(minHeight: 44) }.accessibilityIdentifier("choose-contact")
                     if matchCount > 1 && phone.isEmpty { Text(model.t("في أكثر من اسم مطابق. اختار الشخص الصحيح.", "More than one contact matches. Choose the right person.")).font(.cairo(13, relativeTo: .caption)).foregroundStyle(.secondary) }
                     TextField(model.t("رقم الهاتف", "Phone number"), text: $phone).keyboardType(.phonePad).environment(\.layoutDirection, .leftToRight).accessibilityIdentifier("phone-number")
+                        .onChange(of: phone) { phone = Digits.latin($0) }
                     if !contactName.isEmpty || !phone.isEmpty { Button(model.t("إزالة الشخص", "Remove person"), role: .destructive) { phone = ""; contactName = "" } }
                 }.listRowBackground(Palette.surface)
                 if let error { Section { Text(error).foregroundStyle(.red); Button(model.t("إعدادات الآيفون", "iPhone Settings")) { UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!) } } }

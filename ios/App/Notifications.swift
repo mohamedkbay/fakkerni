@@ -17,7 +17,11 @@ final class NotificationScheduler {
     func schedule(_ reminder: Reminder, tone: Tone, ar: Bool, askPermission: Bool = true) async throws {
         if askPermission { guard try await center.requestAuthorization(options: [.alert, .sound, .badge]) else { throw AppError.permission } }
         guard await isAuthorized() else { throw AppError.permission }
-        guard reminder.alertTime > Date(), !reminder.completed else { return }
+        guard !reminder.completed else { return }
+        guard reminder.eventTime > Date() else { throw AppError.invalidReminder }
+        // A first permission prompt may outlast the short alert delay for a near event.
+        // An explicitly approved save must still schedule that alert after permission is granted.
+        if reminder.alertTime <= Date() && !askPermission { return }
         let content = UNMutableNotificationContent()
         content.title = reminder.title
         let formatter = DateFormatter(); formatter.locale = Locale(identifier: ar ? "ar_LY@numbers=latn" : "en_GB"); formatter.dateFormat = "EEEE d MMM · HH:mm"

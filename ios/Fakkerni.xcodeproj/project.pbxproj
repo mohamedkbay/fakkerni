@@ -10,6 +10,7 @@
 		048E83C4070CF8E5C9D3D8F5 /* tone_bright.caf in Resources */ = {isa = PBXBuildFile; fileRef = C68C6D3750B36A9EB4ACB5C3 /* tone_bright.caf */; };
 		07C1435316A2A07EBEDB2EA4 /* Visuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5333BEF2F8467BAD6D3E1605 /* Visuals.swift */; };
 		13B8697BC056E8A6A55ED401 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 991291DF815461FE6DB0D8E7 /* Assets.xcassets */; };
+		2EB317DE7F18C5A853B45AE9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6A11106286F872B101653B2 /* InfoPlist.strings */; };
 		33117653CFACF2E6506023B4 /* cairo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 47CCB92CCC6975814D46138C /* cairo.ttf */; };
 		355D893B69407A28F4B87A3C /* Cairo-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = DDC1087160244C605CD7BE8E /* Cairo-OFL.txt */; };
 		4C8A391E1CEDF87201A803A9 /* morphicons.json in Resources */ = {isa = PBXBuildFile; fileRef = E9E1D7FC1DC7E0634C228324 /* morphicons.json */; };
@@ -50,9 +51,11 @@
 		12C1D2CE9748D63F07970A05 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		13FD620134382FCDAE7BD103 /* tone_flow.caf */ = {isa = PBXFileReference; path = tone_flow.caf; sourceTree = "<group>"; };
 		153732608F14B7ECD2AC03EF /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		1A1BD009D3B6E24E56B0BC45 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1D12372198A49AC5AEB36B56 /* tone_message.caf */ = {isa = PBXFileReference; path = tone_message.caf; sourceTree = "<group>"; };
 		34B540CFDEDE69DB6979DFDE /* tone_received.caf */ = {isa = PBXFileReference; path = tone_received.caf; sourceTree = "<group>"; };
 		3603E260A642CC63ED11202A /* tone_modern.caf */ = {isa = PBXFileReference; path = tone_modern.caf; sourceTree = "<group>"; };
+		3E85EF872540CE48C7A77687 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		47CCB92CCC6975814D46138C /* cairo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cairo.ttf; sourceTree = "<group>"; };
 		4DA620F33A9613BD7A079758 /* FakkerniUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FakkerniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5333BEF2F8467BAD6D3E1605 /* Visuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Visuals.swift; sourceTree = "<group>"; };
@@ -102,6 +105,7 @@
 				34B540CFDEDE69DB6979DFDE /* tone_received.caf */,
 				8166651EBE31C29CD270B639 /* tone_soft_message.caf */,
 				039375948C587C69CBB9AE12 /* tone_spark.caf */,
+				B6A11106286F872B101653B2 /* InfoPlist.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -222,6 +226,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				ar,
 				en,
 			);
 			mainGroup = 73038792B0D023595D76BA5D;
@@ -247,6 +252,7 @@
 			files = (
 				13B8697BC056E8A6A55ED401 /* Assets.xcassets in Resources */,
 				355D893B69407A28F4B87A3C /* Cairo-OFL.txt in Resources */,
+				2EB317DE7F18C5A853B45AE9 /* InfoPlist.strings in Resources */,
 				B53945ED9E1DF2F2AFCBCA2D /* MORPHICONS-LICENSE.txt in Resources */,
 				CD97A0E8ACBBD1C947650692 /* PrivacyInfo.xcprivacy in Resources */,
 				33117653CFACF2E6506023B4 /* cairo.ttf in Resources */,
@@ -297,6 +303,18 @@
 			targetProxy = A06D80C4CCA8E5E59D4F7BF0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B6A11106286F872B101653B2 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A1BD009D3B6E24E56B0BC45 /* ar */,
+				3E85EF872540CE48C7A77687 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		491FD68546F5EA5C6534AC9D /* Debug */ = {

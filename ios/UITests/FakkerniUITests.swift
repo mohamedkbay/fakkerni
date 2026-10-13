@@ -27,6 +27,8 @@ final class FakkerniUITests: XCTestCase {
         app.buttons["approve-reminder"].tap()
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         if springboard.alerts.buttons["Allow"].waitForExistence(timeout: 5) { springboard.alerts.buttons["Allow"].tap() }
+        XCTAssertTrue(app.buttons["reminders"].waitForExistence(timeout: 10))
+        app.terminate(); app.launchArguments.removeAll { $0 == "-reset-fixture" }; app.launch()
         XCTAssertTrue(app.buttons["reminders"].waitForExistence(timeout: 10)); app.buttons["reminders"].tap()
         XCTAssertTrue(app.staticTexts["Call the client"].waitForExistence(timeout: 5))
     }

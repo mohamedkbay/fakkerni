@@ -50,7 +50,7 @@ struct OnboardingScreen: View {
                     AssistantOrb().frame(height: 260)
                     Text(model.t("خلّينا نبدأ بطريقتك.", "Let's make it yours.")).font(.cairo(30, relativeTo: .largeTitle).weight(.semibold))
                     Text(model.t("اختار اسم للمساعد والمظهر. تقدر تغيّرهم بعدين.", "Choose the assistant's name and appearance. Change them any time.")).foregroundStyle(.secondary)
-                    TextField(model.t("اسم المساعد", "Assistant name"), text: $model.name).textFieldStyle(.roundedBorder).accessibilityIdentifier("assistant-name")
+                    TextField(model.t("اسم المساعد", "Assistant name"), text: $model.name).textFieldStyle(.roundedBorder).accessibilityIdentifier("assistant-name").onChange(of: model.name) { model.name = String(Digits.latin($0).prefix(40)) }
                     Picker(model.t("المظهر", "Appearance"), selection: $model.theme) { Text(model.t("داكن", "Dark")).tag("dark"); Text(model.t("فاتح", "Light")).tag("light") }.pickerStyle(.segmented)
                     Picker("Language / اللغة", selection: $model.language) { Text("العربية").tag("ar"); Text("English").tag("en") }.pickerStyle(.segmented)
                 }.frame(maxWidth: 560).padding(24).frame(maxWidth: .infinity)
